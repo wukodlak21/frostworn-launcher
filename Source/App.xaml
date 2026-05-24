@@ -1,0 +1,15 @@
+﻿<Application x:Class="Oracle_Lite.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Oracle_Lite"
+             StartupUri="Loading_Window.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary  Source="Resources/Styles/Buttons.xaml"></ResourceDictionary>
+                <ResourceDictionary  Source="Resources/Styles/CheckBoxes.xaml"></ResourceDictionary>
+                <ResourceDictionary  Source="Resources/Styles/ProgressBars.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

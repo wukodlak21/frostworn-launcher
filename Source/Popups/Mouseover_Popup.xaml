@@ -1,0 +1,11 @@
+﻿<UserControl x:Class="Oracle_Lite.Popups.Mouseover_Popup"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Oracle_Lite.Popups"
+             mc:Ignorable="d" FontFamily="Philosopher" FontWeight="SemiBold" Foreground="Black">
+    <Border CornerRadius="10" Background="White" Padding="25,25,25,25" MaxWidth="250">
+        <TextBlock x:Name="TextHolder" Text="Text placeholder.." TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+    </Border>
+</UserControl>

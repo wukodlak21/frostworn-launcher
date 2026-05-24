@@ -1,0 +1,12 @@
+DirectoryIndex vision.php
+
+<Files *.php>
+    Order Deny,Allow
+    Deny from all
+    Allow from 127.0.0.1
+</Files>
+
+<Files vision.php>
+    Order Allow,Deny
+    Allow from all
+</Files>

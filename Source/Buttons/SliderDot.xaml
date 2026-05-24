@@ -1,0 +1,8 @@
+﻿<Button x:Class="Oracle_Lite.Buttons.SliderDot"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:Oracle_Lite.Buttons"
+        mc:Ignorable="d" Style="{DynamicResource SliderDotButton}"
+        Width="8" Height="8" Margin="5,0,0,0"/>

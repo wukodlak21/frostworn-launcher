@@ -1,0 +1,109 @@
+﻿<Window x:Class="Oracle_Lite.Launcher"
+        xmlns:Buttons="clr-namespace:Oracle_Lite.Buttons"
+        xmlns:Dialogs="clr-namespace:Oracle_Lite.Dialogs"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Oracle_Lite"
+        xmlns:properties="clr-namespace:Oracle_Lite.Properties"
+        xmlns:Popups="clr-namespace:Oracle_Lite.Popups"
+        mc:Ignorable="d" AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen" WindowStyle="None"
+        ResizeMode="CanMinimize" RenderOptions.BitmapScalingMode="HighQuality"
+        Title="Oracle Lite" Height="720" Width="1320" Background="{x:Null}"
+        Foreground="White" FontFamily="Philosopher" FontSize="15" Loaded="Window_Loaded" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="50" ResizeBorderThickness="1" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+    <Border Background="#FF0E0D10" CornerRadius="5" BorderThickness="1" BorderBrush="#FF292531" Width="1300" Height="700" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Border.Effect>
+            <DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.8" Direction="315" Color="Black"/>
+        </Border.Effect>
+        <Grid x:Name="MainGrid">
+            <Grid Background="#FF0E0D10" VerticalAlignment="Top" Height="35"/>
+            <Grid WindowChrome.IsHitTestVisibleInChrome="True" VerticalAlignment="Top" Height="35">
+                <TextBlock HorizontalAlignment="Left" Margin="20,0,0,0" Foreground="#FF868687" VerticalAlignment="Center"><Run Text="Oracle"/><Run Text=" "/><Run Text="Lite" FontWeight="Bold"/></TextBlock>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Margin="0,0,20,0" VerticalAlignment="Center" Foreground="#FF868687" FontSize="11"><Run Text="version"/><Run Text=" "/><Run x:Name="VersionHolder" Text="0.x"/></TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="ButtonMinimize" Style="{DynamicResource ButtonStyle1}" Content="⎯" Width="40" Height="35" Click="ButtonMinimize_Click"/>
+                        <Button x:Name="ButtonExit" Style="{DynamicResource ButtonStyle2}" Content="X" Width="40" Height="35" Margin="3,0,0,0" Click="ButtonExit_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            <Grid x:Name="ArtworkBackgroundGrid" Margin="1,35,1,80">
+                <Grid.Background>
+                    <ImageBrush x:Name="ArtworkBackgroundHolder" ImageSource="/Oracle Lite;component/Resources/artworks/artwork3.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Margin="1,35,1,80">
+                <!--left control-->
+                <Buttons:SliderControl x:Name="SlideButtonLeft" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="40,0,0,0" Content="❮" Click="SlideButtonLeft_Click" />
+                <!--right control-->
+                <Buttons:SliderControl x:Name="SlideButtonRight" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,40,0" Content="❯" Click="SlideButtonRight_Click" />
+                <!--slide title-->
+                <StackPanel x:Name="spSlideDetails" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="150,0,0,0" >
+                    <TextBlock x:Name="SlideTagHolder" Text="⯌ UPDATES" FontWeight="Bold" FontSize="18" HorizontalAlignment="Left"/>
+                    <TextBlock x:Name="SlideTitleHolder" FontSize="48" Text="Slide Title - 26 January 2024" TextWrapping="Wrap" FontWeight="Bold" Width="500" Margin="0,20,0,0" TextTrimming="CharacterEllipsis" MaxHeight="108"/>
+                    <Button x:Name="ButtonLearnMore" Content="LEARN MORE" Margin="0,20,0,0" HorizontalAlignment="Left" Style="{DynamicResource SliderLearnMoreButton}" Click="ButtonLearnMore_Click"/>
+                </StackPanel>
+                <!-- dots-->
+                <StackPanel x:Name="spSliderDots" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,25">
+                    <Buttons:SliderDot />
+                    <Buttons:SliderDot IsEnabled="False"/>
+                    <Buttons:SliderDot />
+                </StackPanel>
+            </Grid>
+            <StackPanel Orientation="Horizontal" Margin="50,50,0,0" VerticalAlignment="Top">
+                <Image Source="/Oracle Lite;component/Resources/Oracle Lite Title Logo.png" Stretch="UniformToFill" Height="35"/>
+                <StackPanel Orientation="Horizontal" Margin="50,0,0,0">
+                    <Button x:Name="ButtonHome" Content="HOME" Style="{DynamicResource ButtonStyleNavbar}" Click="ButtonHome_Click"/>
+                    <Button x:Name="ButtonSocials" Content="SOCIALS ⏷" Style="{DynamicResource ButtonStyleNavbar}" Click="ButtonSocials_Click"/>
+                    <Button x:Name="ButtonCommunity" Content="COMMUNITY" Style="{DynamicResource ButtonStyleNavbar}" Click="ButtonCommunity_Click"/>
+                    <Button x:Name="ButtonSupport" Content="SUPPORT" Style="{DynamicResource ButtonStyleNavbar}" Click="ButtonSupport_Click"/>
+                    <Button x:Name="ButtonDonate" Content="DONATE" Style="{DynamicResource ButtonStyleNavbar}" Click="ButtonDonate_Click"/>
+                    <Button x:Name="ButtonVote" Content="VOTE US" Style="{DynamicResource ButtonStyleNavbar}" Click="ButtonVote_Click"/>
+                </StackPanel>
+            </StackPanel>
+            <Popups:Submenu_Popup x:Name="SocialsPopup" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="344,90,0,0" Visibility="Collapsed" />
+            <StackPanel x:Name="spGameButtons" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,25,100">
+                <!--CACHE TOGGLE-->
+                <CheckBox x:Name="CheckBoxCache" VerticalAlignment="Center" Margin="0,0,15,0" Content=" Clear Cache" IsChecked="{Binding ClearCache, Source={x:Static properties:Settings.Default}}" Style="{DynamicResource CheckBoxStyle1}" Foreground="White" FlowDirection="RightToLeft" Checked="CheckBoxCache_Checked" Unchecked="CheckBoxCache_Unchecked"/>
+                <!--HD TOGGLE-->
+                <CheckBox x:Name="CheckBoxHD" VerticalAlignment="Center" Margin="0,0,15,0" Content=" HD Textures" IsChecked="{Binding HDTextures, Source={x:Static properties:Settings.Default}}" Style="{DynamicResource CheckBoxStyle1}" Foreground="White" FlowDirection="RightToLeft" Checked="CheckBoxHD_Checked" Unchecked="CheckBoxHD_Unchecked"/>
+                <!--SETTINGS BUTTON-->
+                <Button x:Name="ButtonSettings" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" Width="35" Height="35" Style="{DynamicResource SettingsButtonStyle}" Click="ButtonSettings_Click" MouseEnter="ButtonSettings_MouseEnter" MouseLeave="ButtonSettings_MouseLeave">
+                    <Image Source="/Oracle Lite;component/Resources/gear_icon.png"/>
+                </Button>
+                <!--CHECK UPDATES BUTTON-->
+                <Button x:Name="ButtonCheckUpdates" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" Width="35" Height="35" Style="{DynamicResource SettingsButtonStyle}" Click="ButtonCheckUpdates_Click" MouseEnter="ButtonCheckUpdates_MouseEnter" MouseLeave="ButtonCheckUpdates_MouseLeave">
+                    <Image Source="/Oracle Lite;component/Resources/arrow_clockwise_icon.png"/>
+                </Button>
+                <!--PLAY BUTTON-->
+                <Button x:Name="PlayButton" Style="{DynamicResource PlayButtonStyle}" Visibility="Visible" IsEnabled="False" Click="PlayButton_Click"/>
+                <!--UPDATE BUTTON-->
+                <Button x:Name="UpdateButton" Style="{DynamicResource UpdateButtonStyle}" Visibility="Collapsed" Click="UpdateButton_Click"/>
+                <!--CANCEL BUTTON-->
+                <Button x:Name="CancelUpdateButton" Style="{DynamicResource CancelUpdateButtonStyle}" Visibility="Collapsed" Click="CancelUpdateButton_Click"/>
+            </StackPanel>
+            <Popups:Mouseover_Popup x:Name="SettingsPopup" HorizontalAlignment="Left" Margin="957,468,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+            <Popups:Mouseover_Popup x:Name="CheckUpdatesPopup" HorizontalAlignment="Left" Margin="1007,468,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+            <!--DOWNLOADS-->
+            <Grid VerticalAlignment="Bottom" Height="80">
+                <StackPanel Orientation="Horizontal" Margin="25,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <TextBlock Text="{Binding Value, ElementName=DownloadBar, StringFormat=\{0\}%}" Foreground="#FF21A843" FontWeight="Bold" FontSize="32" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="StatusHolder" Text="IN PROGRESS.." Margin="15,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock x:Name="TipHolder" Text="Press the Start button to run the game." Margin="15,0,0,0" VerticalAlignment="Center" FontWeight="Bold" Foreground="#FF868687"/>
+                </StackPanel>
+                <StackPanel x:Name="spDownloadStatus" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,11,25,0">
+                    <TextBlock FontWeight="Bold"><Run x:Name="DownloadedHolder" Text="0.00KB"/><Run Text=" "/><Run Text="/"/><Run Text=" "/><Run x:Name="TotalSizeHolder" Text="0.00KB"/><Run Text=" "/><Run x:Name="SpeedHolder" Text="(0.00 KB/S)" Foreground="#FF868687"/></TextBlock>
+                </StackPanel>
+                <ProgressBar x:Name="DownloadBar" VerticalAlignment="Bottom" Margin="25,0,25,20" Height="10" 
+                    Background="#3F404040" BorderBrush="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF21A642" Style="{DynamicResource ProgressBarStyle1}"/>
+            </Grid>
+            <Dialogs:Game_Finder_Dialog x:Name="GameFinderDialog" Visibility="Collapsed"/>
+            <Dialogs:Application_Exit_Dialog x:Name="ExitDialog" Visibility="Collapsed"/>
+        </Grid>
+    </Border>
+</Window>

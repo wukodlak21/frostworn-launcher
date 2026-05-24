@@ -1,0 +1,39 @@
+name: Build Frostworn Launcher
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Restore NuGet packages
+      run: nuget restore "Oracle Lite.sln"
+
+    - name: Build Release
+      run: msbuild "Oracle Lite.sln" /p:Configuration=Release /p:Platform="Any CPU"
+
+    - name: Rename exe
+      run: |
+        cd Source\bin\Release
+        ren "Oracle Lite.exe" "Frostworn Launcher.exe"
+        if exist "Oracle Lite.exe.config" ren "Oracle Lite.exe.config" "Frostworn Launcher.exe.config"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Frostworn-Launcher
+        path: |
+          Source/bin/Release/Frostworn Launcher.exe
+          Source/bin/Release/Frostworn Launcher.exe.config
+          Source/bin/Release/Newtonsoft.Json.dll
+          Source/bin/Release/Newtonsoft.Json.xml
+        if-no-files-found: error
