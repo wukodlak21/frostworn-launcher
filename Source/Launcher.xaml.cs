@@ -393,6 +393,8 @@ namespace Oracle_Lite
         public async void StartGameDownload()
         {
             string gamePath = Properties.Settings.Default.GamePath;
+            string installDir = Path.Combine(gamePath, "Frostworn WoW 3.3.5a");
+            Directory.CreateDirectory(installDir);
             string zipUrl = "https://frostworn.com/download/World%20of%20Warcraft%203.3.5a.zip";
             string tempZip = Path.Combine(gamePath, "WoW_install.zip");
 
@@ -460,7 +462,7 @@ namespace Oracle_Lite
                             string rel = entry.FullName.Substring(topDir.Length);
                             if (string.IsNullOrEmpty(rel)) continue;
 
-                            string target = Path.Combine(gamePath, rel.Replace('/', Path.DirectorySeparatorChar));
+                            string target = Path.Combine(installDir, rel.Replace('/', Path.DirectorySeparatorChar));
 
                             if (entry.FullName.EndsWith("/"))
                             {
@@ -481,6 +483,9 @@ namespace Oracle_Lite
 
                 DownloadBar.IsIndeterminate = false;
                 DownloadBar.Value = 100;
+
+                Properties.Settings.Default.GamePath = installDir;
+                Properties.Settings.Default.Save();
             }
             catch (Exception ex)
             {
