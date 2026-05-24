@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Oracle Lite Launcher")]
+[assembly: AssemblyTitle("Frostworn Launcher")]
 [assembly: AssemblyDescription("Oracle Lite Launcher for private World of Warcraft Servers")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("CyberMist2 Inc.")]
-[assembly: AssemblyProduct("Oracle Lite Launcher")]
+[assembly: AssemblyCompany("Frostworn")]
+[assembly: AssemblyProduct("Frostworn Launcher")]
 [assembly: AssemblyCopyright("Copyright © CyberMist2 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
