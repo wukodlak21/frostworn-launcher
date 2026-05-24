@@ -56,7 +56,10 @@
                 </StackPanel>
             </Grid>
             <StackPanel Orientation="Horizontal" Margin="50,50,0,0" VerticalAlignment="Top">
-                <Image Source="/Oracle Lite;component/Resources/Oracle Lite Title Logo.png" Stretch="UniformToFill" Height="35"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="/Oracle Lite;component/Resources/Oracle Lite Title Logo.png" Stretch="Uniform" Height="70" Width="70"/>
+                    <TextBlock Text="FROSTWORN" Foreground="White" FontSize="26" FontWeight="Bold" VerticalAlignment="Center" Margin="12,0,0,0" FontFamily="Philosopher"/>
+                </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="50,0,0,0">
                     <Button x:Name="ButtonHome" Content="HOME" Style="{DynamicResource ButtonStyleNavbar}" Click="ButtonHome_Click"/>
                     <Button x:Name="ButtonSocials" Content="SOCIALS ⏷" Style="{DynamicResource ButtonStyleNavbar}" Click="ButtonSocials_Click"/>
