@@ -22,10 +22,12 @@ jobs:
       run: msbuild "Oracle Lite.sln" /p:Configuration=Release /p:Platform="Any CPU"
 
     - name: Rename exe
+      shell: pwsh
       run: |
-        cd Source\bin\Release
-        ren "Oracle Lite.exe" "Frostworn Launcher.exe"
-        if exist "Oracle Lite.exe.config" ren "Oracle Lite.exe.config" "Frostworn Launcher.exe.config"
+        Rename-Item "Source\bin\Release\Oracle Lite.exe" "Frostworn Launcher.exe"
+        if (Test-Path "Source\bin\Release\Oracle Lite.exe.config") {
+          Rename-Item "Source\bin\Release\Oracle Lite.exe.config" "Frostworn Launcher.exe.config"
+        }
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
