@@ -12,6 +12,7 @@
         WindowStartupLocation="CenterScreen" WindowStyle="None"
         ResizeMode="CanMinimize" RenderOptions.BitmapScalingMode="HighQuality"
         Title="Frostworn" Height="720" Width="1320" Background="{x:Null}"
+        Icon="/Oracle Lite;component/Oracle Lite Logo.ico"
         Foreground="White" FontFamily="Philosopher" FontSize="15" Loaded="Window_Loaded" MouseLeftButtonDown="Window_MouseLeftButtonDown">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="50" ResizeBorderThickness="1" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
