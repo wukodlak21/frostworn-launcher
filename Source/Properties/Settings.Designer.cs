@@ -25,7 +25,7 @@ namespace Oracle_Lite.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/vision_lite/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://frostworn.com/vision_lite/vision.php")]
         public string ApiTarget {
             get {
                 return ((string)(this["ApiTarget"]));
