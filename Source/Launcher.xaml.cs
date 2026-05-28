@@ -1,4 +1,4 @@
-﻿using Oracle_Lite.Controllers;
+using Oracle_Lite.Controllers;
 using Oracle_Lite.Library;
 using System;
 using System.ComponentModel;
@@ -257,6 +257,9 @@ namespace Oracle_Lite
                             // reads all lines except the lines that contains SET portal
                             var newLines = oldLines.Where(line => !line.ToLower().Contains("set realmlist"));
 
+                            // Remove read-only attribute if set
+                            var fi = new FileInfo(configWTFPath);
+                            if (fi.IsReadOnly) fi.IsReadOnly = false;
                             File.WriteAllLines(configWTFPath, newLines);
 
                             using (var outputFile = new StreamWriter(configWTFPath, true))
