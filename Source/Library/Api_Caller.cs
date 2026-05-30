@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
@@ -42,6 +42,24 @@ namespace Oracle_Lite.Library
                 string message = $"[File '{Extensions.GetCurrentCallerFileName()}' - Method 'GameFilesListResponse']\r\nException error: {ex.Message}\r\nApi message: {json}";
 
                 MessageBox.Show(message);
+            }
+
+            return null;
+        }
+
+        public static async Task<Newton_Workloader.LauncherVersionResponse> LauncherVersionResponse()
+        {
+            string json = string.Empty;
+
+            try
+            {
+                json = await Newton_Workloader.GetLauncherVersionResponse();
+
+                return Newton_Workloader.LauncherVersionResponse.FromJson(json);
+            }
+            catch
+            {
+                // Silent fail - self-update is not critical
             }
 
             return null;

@@ -13,9 +13,6 @@ using System.Windows;
 
 namespace Oracle_Lite
 {
-    /// <summary>
-    /// Interaction logic for Launcher.xaml
-    /// </summary>
     public partial class Launcher : Window
     {
         private Game_Updater gameUpdater = new Game_Updater();
@@ -24,9 +21,7 @@ namespace Oracle_Lite
         public Launcher()
         {
             InitializeComponent();
-
             DataContext = this;
-
             VersionHolder.Text = GetAppVersion();
         }
 
@@ -50,16 +45,66 @@ namespace Oracle_Lite
             }
         }
 
-        // Property to get the application version.
         public string AppVersion
         {
             get { return GetAppVersion(); }
         }
 
-        // Helper method to retrieve the application version.
         private string GetAppVersion()
         {
             return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
+
+        /// <summary>
+        /// Checks if a new launcher version is available and auto-updates if so.
+        /// Downloads new exe, writes a batch updater, launches it, then exits.
+        /// </summary>
+        private async Task CheckForLauncherUpdate()
+        {
+            try
+            {
+                var response = await Api_Caller.LauncherVersionResponse();
+                if (response == null) return;
+
+                string currentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                if (response.Version == currentVersion) return;
+
+                StatusHolder.Text = "UPDATING LAUNCHER...";
+                TipHolder.Visibility = Visibility.Visible;
+                TipHolder.Text = $"New launcher version {response.Version} — please wait...";
+
+                string launcherPath = Assembly.GetExecutingAssembly().Location;
+                string launcherDir  = Path.GetDirectoryName(launcherPath);
+                string updatePath   = Path.Combine(launcherDir, "_launcher_update.exe");
+                string batPath      = Path.Combine(launcherDir, "_update_launcher.bat");
+
+                using (var wc = new WebClient())
+                {
+                    wc.DownloadProgressChanged += (s, e) => DownloadBar.Value = e.ProgressPercentage;
+                    await wc.DownloadFileTaskAsync(new Uri(response.Url), updatePath);
+                }
+
+                File.WriteAllText(batPath,
+                    "@echo off\r\n" +
+                    "timeout /t 2 /nobreak > nul\r\n" +
+                    $"copy /y \"{updatePath}\" \"{launcherPath}\"\r\n" +
+                    $"del \"{updatePath}\"\r\n" +
+                    $"del \"%~f0\"\r\n" +
+                    $"start \"\" \"{launcherPath}\"\r\n"
+                );
+
+                Process.Start(new ProcessStartInfo(batPath)
+                {
+                    UseShellExecute = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                });
+
+                Application.Current.Shutdown();
+            }
+            catch
+            {
+                // Silent fail — launcher update is not critical
+            }
         }
 
         public async void CheckForUpdates()
@@ -69,19 +114,22 @@ namespace Oracle_Lite
             ButtonCheckUpdates.IsEnabled = false;
             CheckBoxHD.IsEnabled = false;
 
+            // Check for launcher self-update first
+            await CheckForLauncherUpdate();
+
             if (await gameUpdater.UpdateList())
             {
-                PlayButton.Visibility = Visibility.Collapsed; // hide
-                UpdateButton.Visibility = Visibility.Visible; // show
-                CancelUpdateButton.Visibility = Visibility.Collapsed; // hide
-                TipHolder.Visibility = Visibility.Visible; // show
+                PlayButton.Visibility = Visibility.Collapsed;
+                UpdateButton.Visibility = Visibility.Visible;
+                CancelUpdateButton.Visibility = Visibility.Collapsed;
+                TipHolder.Visibility = Visibility.Visible;
 
                 StatusHolder.Text = "UPDATES AVAILABLE!";
                 TipHolder.Text = "Press Update button to start downloading!";
             }
             else
             {
-                TipHolder.Visibility = Visibility.Visible; // show
+                TipHolder.Visibility = Visibility.Visible;
 
                 StatusHolder.Text = "UP TO DATE";
                 TipHolder.Text = "Press the Start button to run the game.";
@@ -94,13 +142,11 @@ namespace Oracle_Lite
             CheckBoxHD.IsEnabled = true;
         }
 
-        // Minimizes the launcher
         private void ButtonMinimize_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
         }
 
-        // Displays the application exist dialog
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
             ExitDialog.Show();
@@ -185,7 +231,7 @@ namespace Oracle_Lite
                     if (Directory.Exists($"{gamepath}\\Cache") && Properties.Settings.Default.ClearCache)
                     {
                         var dir = new DirectoryInfo($"{gamepath}\\Cache");
-                        dir.Delete(true); // true => recursive delete
+                        dir.Delete(true);
                     }
 
                     // set realmlist
@@ -195,10 +241,7 @@ namespace Oracle_Lite
                     if (File.Exists(configWTFPath))
                     {
                         var oldLines = File.ReadAllLines(configWTFPath);
-
-                        // reads all lines except the lines that contains SET portal
                         var newLines = oldLines.Where(line => !line.ToLower().Contains("set realmlist"));
-
                         File.WriteAllLines(configWTFPath, newLines);
 
                         using (var outputFile = new StreamWriter(configWTFPath, true))
@@ -206,14 +249,11 @@ namespace Oracle_Lite
                     }
 
                     await Task.Delay(2000);
-
                     WindowState = WindowState.Minimized;
-
                     Process.Start(WowExePath);
 
                     PlayButton.Content = "PLAY";
                     PlayButton.IsEnabled = true;
-                    //await RunGameAsync(WowExePath);
                 }
                 catch (Exception ex)
                 {
@@ -224,7 +264,6 @@ namespace Oracle_Lite
             else
             {
                 GameFinderDialog.Show();
-
                 Dispatcher.Invoke(() =>
                 {
                     PlayButton.IsEnabled = true;
@@ -253,11 +292,8 @@ namespace Oracle_Lite
                         if (File.Exists(configWTFPath))
                         {
                             var oldLines = File.ReadAllLines(configWTFPath);
-
-                            // reads all lines except the lines that contains SET portal
                             var newLines = oldLines.Where(line => !line.ToLower().Contains("set realmlist"));
 
-                            // Remove read-only attribute if set
                             var fi = new FileInfo(configWTFPath);
                             if (fi.IsReadOnly) fi.IsReadOnly = false;
                             File.WriteAllLines(configWTFPath, newLines);
@@ -280,23 +316,18 @@ namespace Oracle_Lite
             if (gameUpdater.Start())
             {
                 isUpdating = true;
-
                 DownloadBar.Value = 0;
-                PlayButton.Visibility = Visibility.Collapsed; // hide
-                UpdateButton.Visibility = Visibility.Collapsed; // hide
-                CancelUpdateButton.Visibility = Visibility.Visible; // show
-                TipHolder.Visibility = Visibility.Hidden; // hide
-                spDownloadStatus.Visibility = Visibility.Visible; // show
+                PlayButton.Visibility = Visibility.Collapsed;
+                UpdateButton.Visibility = Visibility.Collapsed;
+                CancelUpdateButton.Visibility = Visibility.Visible;
+                TipHolder.Visibility = Visibility.Hidden;
+                spDownloadStatus.Visibility = Visibility.Visible;
                 ButtonSettings.IsEnabled = false;
                 ButtonCheckUpdates.IsEnabled = false;
                 CheckBoxHD.IsEnabled = false;
 
                 gameUpdater.ProgressChangedEvent += OnGameUpdateProgressChanged;
                 gameUpdater.CompletedEvent += OnGameUpdateCompleted;
-            }
-            else
-            {
-                // do what if updater didnt start, means nothing to download or?
             }
         }
 
@@ -319,11 +350,11 @@ namespace Oracle_Lite
         {
             isUpdating = false;
             DownloadBar.Value = 100;
-            PlayButton.Visibility = Visibility.Visible; // show
-            UpdateButton.Visibility = Visibility.Collapsed; // hide
-            CancelUpdateButton.Visibility = Visibility.Collapsed; // hide
-            spDownloadStatus.Visibility = Visibility.Hidden; // hide
-            TipHolder.Visibility = Visibility.Visible; // show
+            PlayButton.Visibility = Visibility.Visible;
+            UpdateButton.Visibility = Visibility.Collapsed;
+            CancelUpdateButton.Visibility = Visibility.Collapsed;
+            spDownloadStatus.Visibility = Visibility.Hidden;
+            TipHolder.Visibility = Visibility.Visible;
             TipHolder.Text = "Press the Start button to run the game.";
             StatusHolder.Text = "COMPLETED";
             ButtonSettings.IsEnabled = true;
@@ -335,15 +366,14 @@ namespace Oracle_Lite
         {
             isUpdating = false;
             DownloadBar.Value = 0;
-            PlayButton.Visibility = Visibility.Collapsed; // hide
-            UpdateButton.Visibility = Visibility.Visible; // show
-            CancelUpdateButton.Visibility = Visibility.Collapsed; // hide
-            TipHolder.Visibility = Visibility.Visible; // show
-            spDownloadStatus.Visibility = Visibility.Hidden; // hide
+            PlayButton.Visibility = Visibility.Collapsed;
+            UpdateButton.Visibility = Visibility.Visible;
+            CancelUpdateButton.Visibility = Visibility.Collapsed;
+            TipHolder.Visibility = Visibility.Visible;
+            spDownloadStatus.Visibility = Visibility.Hidden;
             ButtonSettings.IsEnabled = true;
             ButtonCheckUpdates.IsEnabled = true;
             CheckBoxHD.IsEnabled = true;
-
             StatusHolder.Text = "UPDATES AVAILABLE!";
         }
 
@@ -392,7 +422,7 @@ namespace Oracle_Lite
             Properties.Settings.Default.HDTextures = false;
             Properties.Settings.Default.Save();
         }
-    
+
         public async void StartGameDownload()
         {
             string gamePath = Properties.Settings.Default.GamePath;
@@ -502,7 +532,6 @@ namespace Oracle_Lite
             PlayButton.IsEnabled = true;
             ButtonSettings.IsEnabled = true;
             ButtonCheckUpdates.IsEnabled = true;
-            CheckBoxHD.IsEnabled = true;
             spDownloadStatus.Visibility = Visibility.Hidden;
 
             CheckForUpdates();

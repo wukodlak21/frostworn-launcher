@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -71,6 +71,30 @@ namespace Oracle_Lite.Library
             return await JsonTool.GetStringFromPOST(Properties.Settings.Default.ApiTarget, new Dictionary<string, string>
             {
                 { "execute", "2" },
+            });
+        }
+        #endregion
+
+        #region LAUNCHER VERSION RESPONSE
+        public partial class LauncherVersionResponse
+        {
+            [JsonProperty("version")]
+            public string Version { get; set; }
+
+            [JsonProperty("url")]
+            public string Url { get; set; }
+        }
+
+        public partial class LauncherVersionResponse
+        {
+            public static LauncherVersionResponse FromJson(string json) => JsonConvert.DeserializeObject<LauncherVersionResponse>(json, JsonTool.Converter.Settings);
+        }
+
+        public static async Task<string> GetLauncherVersionResponse()
+        {
+            return await JsonTool.GetStringFromPOST(Properties.Settings.Default.ApiTarget, new Dictionary<string, string>
+            {
+                { "execute", "3" },
             });
         }
         #endregion

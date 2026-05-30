@@ -2,7 +2,7 @@ name: Build Frostworn Launcher
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -16,26 +16,18 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Restore NuGet packages
-      run: nuget restore "Oracle Lite.sln"
+      run: nuget restore "Source/Oracle Lite.csproj"
 
     - name: Build Release
-      run: msbuild "Oracle Lite.sln" /p:Configuration=Release /p:Platform="Any CPU"
+      run: msbuild "Source/Oracle Lite.csproj" /p:Configuration=Release /p:Platform=AnyCPU
 
-    - name: Rename exe
-      shell: pwsh
+    - name: Rename output
       run: |
-        Rename-Item "Source\bin\Release\Oracle Lite.exe" "Frostworn Launcher.exe"
-        if (Test-Path "Source\bin\Release\Oracle Lite.exe.config") {
-          Rename-Item "Source\bin\Release\Oracle Lite.exe.config" "Frostworn Launcher.exe.config"
-        }
+        copy "Source\bin\Release\FrostwornLauncher.exe" "FrostwornLauncher.exe"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Frostworn-Launcher
-        path: |
-          Source/bin/Release/Frostworn Launcher.exe
-          Source/bin/Release/Frostworn Launcher.exe.config
-          Source/bin/Release/Newtonsoft.Json.dll
-          Source/bin/Release/Newtonsoft.Json.xml
-        if-no-files-found: error
+        name: FrostwornLauncher
+        path: FrostwornLauncher.exe
+        retention-days: 30
