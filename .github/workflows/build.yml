@@ -15,19 +15,18 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
     - name: Restore NuGet packages
-      run: nuget restore "Source/Oracle Lite.csproj"
+      run: nuget restore "Source/Oracle Lite.csproj" -PackagesDirectory "Source/packages"
 
     - name: Build Release
       run: msbuild "Source/Oracle Lite.csproj" /p:Configuration=Release /p:Platform=AnyCPU
-
-    - name: Rename output
-      run: |
-        copy "Source\bin\Release\FrostwornLauncher.exe" "FrostwornLauncher.exe"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: FrostwornLauncher
-        path: FrostwornLauncher.exe
+        path: "Source/bin/Release/FrostwornLauncher.exe"
         retention-days: 30
