@@ -1,0 +1,39 @@
+name: Build Mac Launcher
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'mac/**'
+  workflow_dispatch:
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build FrostwornLauncher.app
+      run: |
+        # Kreiraj .app strukturu
+        mkdir -p FrostwornLauncher.app/Contents/MacOS
+        mkdir -p FrostwornLauncher.app/Contents/Resources
+
+        # Kopiraj skriptu i Info.plist
+        cp mac/FrostwornLauncher.sh FrostwornLauncher.app/Contents/MacOS/FrostwornLauncher
+        cp mac/Info.plist FrostwornLauncher.app/Contents/Info.plist
+
+        # Daj execute pravo
+        chmod +x FrostwornLauncher.app/Contents/MacOS/FrostwornLauncher
+
+        # Zipuj .app
+        zip -r FrostwornLauncher-Mac.zip FrostwornLauncher.app
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: FrostwornLauncher-Mac
+        path: FrostwornLauncher-Mac.zip
+        if-no-files-found: error
+        retention-days: 30
