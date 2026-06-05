@@ -245,7 +245,7 @@ namespace Oracle_Lite
                         File.WriteAllLines(configWTFPath, newLines);
 
                         using (var outputFile = new StreamWriter(configWTFPath, true))
-                            outputFile.WriteLine($"SET realmList \"{Properties.Settings.Default.RealmList}\"");
+                            outputFile.WriteLine("SET realmList \"logon.frostworn.com\"");
                     }
 
                     await Task.Delay(2000);
