@@ -1,6 +1,5 @@
 using Oracle_Lite.Controllers;
-using Ora
-                            fi.IsReadOnly = true;cle_Lite.Library;
+using Oracle_Lite.Library;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -300,7 +299,7 @@ namespace Oracle_Lite
                             File.WriteAllLines(configWTFPath, newLines);
 
                             using (var outputFile = new StreamWriter(configWTFPath, true))
-                                outputFile.WriteLine($"set realmlist \"logon.frostworn.com\"");
+                                outputFile.WriteLine("set realmlist \"logon.frostworn.com\"");
                             fi.IsReadOnly = true;
                         }
                     }
