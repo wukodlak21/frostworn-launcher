@@ -241,11 +241,14 @@ namespace Oracle_Lite
                     if (File.Exists(configWTFPath))
                     {
                         var oldLines = File.ReadAllLines(configWTFPath);
-                        var newLines = oldLines.Where(line => !line.ToLower().Contains("set realmlist"));
+                        var newLines = oldLines.Where(line => !line.ToLower().Contains("set realmlist") && !line.ToLower().Contains("set portal"));
                         File.WriteAllLines(configWTFPath, newLines);
 
                         using (var outputFile = new StreamWriter(configWTFPath, true))
+                        {
                             outputFile.WriteLine("SET realmList \"logon.frostworn.com\"");
+                            outputFile.WriteLine("SET portal \"logon.frostworn.com\"");
+                        }
                     }
 
                     await Task.Delay(2000);
