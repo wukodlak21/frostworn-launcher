@@ -24,9 +24,25 @@ jobs:
     - name: Build Release
       run: msbuild "Source/Oracle Lite.csproj" /p:Configuration=Release /p:Platform=AnyCPU
 
+    - name: Install ILRepack
+      run: nuget install ILRepack -Version 2.0.18 -OutputDirectory ilrepack_tools
+
+    - name: Merge Newtonsoft.Json into exe
+      shell: pwsh
+      run: |
+        $ilrepack = (Get-ChildItem -Path "ilrepack_tools" -Filter "ILRepack.exe" -Recurse | Select-Object -First 1).FullName
+        Write-Host "ILRepack path: $ilrepack"
+        & $ilrepack /out:"Source\bin\Release\FrostwornLauncher-merged.exe" `
+          /target:winexe `
+          "Source\bin\Release\FrostwornLauncher.exe" `
+          "Source\bin\Release\Newtonsoft.Json.dll"
+        Remove-Item "Source\bin\Release\FrostwornLauncher.exe"
+        Rename-Item "Source\bin\Release\FrostwornLauncher-merged.exe" "FrostwornLauncher.exe"
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: FrostwornLauncher
-        path: "Source/bin/Release/FrostwornLauncher.exe"
+        path: Source/bin/Release/FrostwornLauncher.exe
+        if-no-files-found: error
         retention-days: 30
