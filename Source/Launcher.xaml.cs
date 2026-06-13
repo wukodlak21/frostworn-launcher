@@ -229,9 +229,13 @@ namespace Oracle_Lite
                 {
                     // clear cache
                     if (Directory.Exists($"{gamepath}\\Cache") && Properties.Settings.Default.ClearCache)
-                    {
+                    { 
+                       try
+                       {
                         var dir = new DirectoryInfo($"{gamepath}\\Cache");
                         dir.Delete(true);
+                       }
+                       catch { }
                     }
 
                     // set realmlist
