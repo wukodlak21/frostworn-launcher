@@ -304,12 +304,7 @@ namespace Oracle_Lite
 
                         var fi = new FileInfo(configWTFPath);
                         if (fi.Exists && fi.IsReadOnly) fi.IsReadOnly = false;
-                        IEnumerable<string> newLines = fi.Exists
-                            ? File.ReadAllLines(configWTFPath).Where(line => !line.ToLower().Contains("set realmlist"))
-                            : Enumerable.Empty<string>();
-                        File.WriteAllLines(configWTFPath, newLines);
-                        using (var outputFile = new StreamWriter(configWTFPath, true))
-                            outputFile.WriteLine("set realmlist \"logon.frostworn.com\"");
+                        File.WriteAllText(configWTFPath, "set realmlist \"logon.frostworn.com\"\r\n");
                         fi.IsReadOnly = true;
                     }
                 }
