@@ -266,6 +266,8 @@ namespace Oracle_Lite
                 {
                     string message = $"[File '{Extensions.GetCurrentCallerFileName()}' - Method 'PlayButton_Click']\r\nException error: {ex.Message}";
                     MessageBox.Show(message);
+                    PlayButton.Content = "PLAY";
+                    PlayButton.IsEnabled = true;
                 }
             }
             else
