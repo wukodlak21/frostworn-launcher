@@ -244,6 +244,9 @@ namespace Oracle_Lite
 
                     if (File.Exists(configWTFPath))
                     {
+                        var cfgFi = new FileInfo(configWTFPath);
+                        if (cfgFi.IsReadOnly) cfgFi.IsReadOnly = false;
+
                         var oldLines = File.ReadAllLines(configWTFPath);
                         var newLines = oldLines.Where(line => !line.ToLower().Contains("set realmlist") && !line.ToLower().Contains("set portal"));
                         File.WriteAllLines(configWTFPath, newLines);
@@ -253,6 +256,7 @@ namespace Oracle_Lite
                             outputFile.WriteLine("SET realmList \"logon.frostworn.com\"");
                             outputFile.WriteLine("SET portal \"logon.frostworn.com\"");
                         }
+                        cfgFi.IsReadOnly = true;
                     }
 
                     await Task.Delay(2000);
@@ -298,19 +302,15 @@ namespace Oracle_Lite
                     {
                         string configWTFPath = $@"{gamepath}\data\{dirName}\Realmlist.wtf";
 
-                        if (File.Exists(configWTFPath))
-                        {
-                            var oldLines = File.ReadAllLines(configWTFPath);
-                            var newLines = oldLines.Where(line => !line.ToLower().Contains("set realmlist"));
-
-                            var fi = new FileInfo(configWTFPath);
-                            if (fi.IsReadOnly) fi.IsReadOnly = false;
-                            File.WriteAllLines(configWTFPath, newLines);
-
-                            using (var outputFile = new StreamWriter(configWTFPath, true))
-                                outputFile.WriteLine("set realmlist \"logon.frostworn.com\"");
-                            fi.IsReadOnly = true;
-                        }
+                        var fi = new FileInfo(configWTFPath);
+                        if (fi.Exists && fi.IsReadOnly) fi.IsReadOnly = false;
+                        IEnumerable<string> newLines = fi.Exists
+                            ? File.ReadAllLines(configWTFPath).Where(line => !line.ToLower().Contains("set realmlist"))
+                            : Enumerable.Empty<string>();
+                        File.WriteAllLines(configWTFPath, newLines);
+                        using (var outputFile = new StreamWriter(configWTFPath, true))
+                            outputFile.WriteLine("set realmlist \"logon.frostworn.com\"");
+                        fi.IsReadOnly = true;
                     }
                 }
             }
