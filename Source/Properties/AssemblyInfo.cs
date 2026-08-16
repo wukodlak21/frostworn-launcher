@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 using System.Windows;
 
 [assembly: AssemblyTitle("Frostworn Launcher")]
-[assembly: AssemblyDescription("Oracle Lite Launcher for private World of Warcraft Servers")]
+[assembly: AssemblyDescription("Frostworn Launcher for private World of Warcraft Servers")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Frostworn")]
 [assembly: AssemblyProduct("Frostworn Launcher")]
-[assembly: AssemblyCopyright("Copyright Â© CyberMist2 2024")]
+[assembly: AssemblyCopyright("Copyright © Frostworn 2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
