@@ -18,6 +18,9 @@ namespace Oracle_Lite.Library
             [JsonProperty("tag")]
             public string Tag { get; set; }
 
+            [JsonProperty("meta")]
+            public string Meta { get; set; }
+
             [JsonProperty("title")]
             public string Title { get; set; }
 
@@ -95,6 +98,88 @@ namespace Oracle_Lite.Library
             return await JsonTool.GetStringFromPOST(Properties.Settings.Default.ApiTarget, new Dictionary<string, string>
             {
                 { "execute", "3" },
+            });
+        }
+        #endregion
+
+        #region SERVER STATUS RESPONSE
+        public partial class ServerStatusRealm
+        {
+            [JsonProperty("key")]
+            public string Key { get; set; }
+
+            [JsonProperty("label")]
+            public string Label { get; set; }
+
+            [JsonProperty("online")]
+            public int Online { get; set; }
+
+            [JsonProperty("bots")]
+            public int Bots { get; set; }
+        }
+
+        public partial class ServerStatusResponse
+        {
+            [JsonProperty("available")]
+            public bool Available { get; set; }
+
+            [JsonProperty("realms")]
+            public List<ServerStatusRealm> Realms { get; set; }
+
+            [JsonProperty("total")]
+            public int Total { get; set; }
+        }
+
+        public partial class ServerStatusResponse
+        {
+            public static ServerStatusResponse FromJson(string json) => JsonConvert.DeserializeObject<ServerStatusResponse>(json, JsonTool.Converter.Settings);
+        }
+
+        public static async Task<string> GetServerStatusResponse()
+        {
+            return await JsonTool.GetStringFromPOST(Properties.Settings.Default.ApiTarget, new Dictionary<string, string>
+            {
+                { "execute", "4" },
+            });
+        }
+        #endregion
+
+        #region MOST WANTED RESPONSE
+        public partial class WantedPlayer
+        {
+            [JsonProperty("name")]
+            public string Name { get; set; }
+
+            [JsonProperty("level")]
+            public int Level { get; set; }
+
+            [JsonProperty("bounty")]
+            public int Bounty { get; set; }
+        }
+
+        public partial class MostWantedResponse
+        {
+            [JsonProperty("available")]
+            public bool Available { get; set; }
+
+            [JsonProperty("realm")]
+            public string Realm { get; set; }
+
+            [JsonProperty("players")]
+            public List<WantedPlayer> Players { get; set; }
+        }
+
+        public partial class MostWantedResponse
+        {
+            public static MostWantedResponse FromJson(string json) => JsonConvert.DeserializeObject<MostWantedResponse>(json, JsonTool.Converter.Settings);
+        }
+
+        public static async Task<string> GetMostWantedResponse(string realm)
+        {
+            return await JsonTool.GetStringFromPOST(Properties.Settings.Default.ApiTarget, new Dictionary<string, string>
+            {
+                { "execute", "5" },
+                { "realm", realm },
             });
         }
         #endregion

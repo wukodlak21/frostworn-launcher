@@ -1,6 +1,7 @@
 using Oracle_Lite.Controllers;
 using Oracle_Lite.Library;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -10,6 +11,8 @@ using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Oracle_Lite
 {
@@ -17,6 +20,12 @@ namespace Oracle_Lite
     {
         private Game_Updater gameUpdater = new Game_Updater();
         public bool isUpdating = false;
+
+        private readonly DispatcherTimer serverStatusTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        private int secondsSinceStatusRefresh = 0;
+        private const int StatusRefreshIntervalSeconds = 30;
+
+        private string lastWantedRealmKey = null;
 
         public Launcher()
         {
@@ -35,6 +44,10 @@ namespace Oracle_Lite
 
             Slider.Start();
 
+            serverStatusTimer.Tick += ServerStatusTimer_Tick;
+            serverStatusTimer.Start();
+            _ = RefreshServerStatus();
+
             if (string.IsNullOrEmpty(Properties.Settings.Default.GamePath) || string.IsNullOrWhiteSpace(Properties.Settings.Default.GamePath))
             {
                 GameFinderDialog.Show();
@@ -43,6 +56,107 @@ namespace Oracle_Lite
             {
                 CheckForUpdates();
             }
+        }
+
+        private void ServerStatusTimer_Tick(object sender, EventArgs e)
+        {
+            secondsSinceStatusRefresh++;
+            StatusRefreshedHolder.Text = $"refreshed {secondsSinceStatusRefresh}s ago";
+
+            if (secondsSinceStatusRefresh >= StatusRefreshIntervalSeconds)
+            {
+                _ = RefreshServerStatus();
+            }
+        }
+
+        private async Task RefreshServerStatus()
+        {
+            var response = await Api_Caller.ServerStatusResponse();
+            secondsSinceStatusRefresh = 0;
+
+            var offlineBrush = new SolidColorBrush(Color.FromRgb(0x86, 0x86, 0x87));
+            var onlineBrush = new SolidColorBrush(Color.FromRgb(0x21, 0xA8, 0x43));
+
+            if (response == null || !response.Available || response.Realms == null)
+            {
+                IccOnlineHolder.Text = "—";
+                PrgOnlineHolder.Text = "—";
+                IccBotsHolder.Text = "";
+                PrgBotsHolder.Text = "";
+                TotalOnlineHolder.Text = "status unavailable";
+                StatusRefreshedHolder.Text = "retrying…";
+                StatusPulseDot.Fill = offlineBrush;
+                IccStatusDot.Fill = offlineBrush;
+                PrgStatusDot.Fill = offlineBrush;
+                return;
+            }
+
+            var icc = response.Realms.FirstOrDefault(r => r.Key == "ICC");
+            var prg = response.Realms.FirstOrDefault(r => r.Key == "PRG");
+
+            IccOnlineHolder.Text = icc != null ? icc.Online.ToString("N0") : "—";
+            PrgOnlineHolder.Text = prg != null ? prg.Online.ToString("N0") : "—";
+            IccBotsHolder.Text = icc != null ? $" · {icc.Bots:N0} bots" : "";
+            PrgBotsHolder.Text = prg != null ? $" · {prg.Bots:N0} bots" : "";
+            TotalOnlineHolder.Text = $"{response.Total:N0} real players";
+            StatusRefreshedHolder.Text = "refreshed just now";
+            StatusPulseDot.Fill = onlineBrush;
+            IccStatusDot.Fill = onlineBrush;
+            PrgStatusDot.Fill = onlineBrush;
+        }
+
+        public void RefreshWantedForTag(string slideTag)
+        {
+            string realmKey = "ICC";
+            string realmLabel = "LEGACY X5";
+
+            if (string.Equals(slideTag, "THUNDERSTORM X1", StringComparison.OrdinalIgnoreCase))
+            {
+                realmKey = "PRG";
+                realmLabel = "THUNDERSTORM X1";
+            }
+
+            if (realmKey == lastWantedRealmKey) return;
+            lastWantedRealmKey = realmKey;
+
+            WantedRealmHolder.Text = realmLabel;
+            _ = RefreshWanted(realmKey);
+        }
+
+        private async Task RefreshWanted(string realmKey)
+        {
+            var response = await Api_Caller.MostWantedResponse(realmKey);
+
+            var rows = new[]
+            {
+                (Name: Wanted1Name, Stars: Wanted1Stars, Bounty: Wanted1Bounty),
+                (Name: Wanted2Name, Stars: Wanted2Stars, Bounty: Wanted2Bounty),
+                (Name: Wanted3Name, Stars: Wanted3Stars, Bounty: Wanted3Bounty),
+            };
+
+            var players = (response != null && response.Available && response.Players != null)
+                ? response.Players
+                : new List<Newton_Workloader.WantedPlayer>();
+
+            for (int i = 0; i < rows.Length; i++)
+            {
+                if (i < players.Count)
+                {
+                    var player = players[i];
+                    int stars = Math.Max(0, Math.Min(5, player.Level));
+                    rows[i].Name.Text = player.Name;
+                    rows[i].Stars.Text = new string('★', stars) + new string('☆', 5 - stars);
+                    rows[i].Bounty.Text = $"{player.Bounty:N0}g";
+                }
+                else
+                {
+                    rows[i].Name.Text = "—";
+                    rows[i].Stars.Text = "☆☆☆☆☆";
+                    rows[i].Bounty.Text = "";
+                }
+            }
+
+            WantedFootHolder.Text = players.Count > 0 ? "claim a bounty · kill on sight" : "no active bounties right now";
         }
 
         public string AppVersion
@@ -154,7 +268,7 @@ namespace Oracle_Lite
 
         private void ButtonHome_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("http://localhost/home");
+            Process.Start("https://frostworn.com");
         }
 
         private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -172,22 +286,22 @@ namespace Oracle_Lite
 
         private void ButtonCommunity_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("http://localhost/forums");
+            Process.Start("https://discord.gg/VGPh2WzdE");
         }
 
         private void ButtonSupport_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("http://localhost/support");
+            Process.Start("https://frostworn.com/#contact");
         }
 
         private void ButtonDonate_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("http://localhost/donate");
+            Process.Start("https://frostworn.com/shop.php");
         }
 
         private void ButtonVote_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("http://localhost/vote");
+            Process.Start("https://frostworn.com/vote_redirect.php");
         }
 
         private void ButtonLearnMore_Click(object sender, RoutedEventArgs e)
@@ -238,27 +352,6 @@ namespace Oracle_Lite
                        catch { }
                     }
 
-                    // set realmlist
-                    string configWTFPath = $@"{gamepath}\WTF\Config.wtf";
-                    SetRealmlistPerLocale();
-
-                    if (File.Exists(configWTFPath))
-                    {
-                        var cfgFi = new FileInfo(configWTFPath);
-                        if (cfgFi.IsReadOnly) cfgFi.IsReadOnly = false;
-
-                        var oldLines = File.ReadAllLines(configWTFPath);
-                        var newLines = oldLines.Where(line => !line.ToLower().Contains("set realmlist") && !line.ToLower().Contains("set portal"));
-                        File.WriteAllLines(configWTFPath, newLines);
-
-                        using (var outputFile = new StreamWriter(configWTFPath, true))
-                        {
-                            outputFile.WriteLine("SET realmList \"logon.frostworn.com\"");
-                            outputFile.WriteLine("SET portal \"logon.frostworn.com\"");
-                        }
-                        cfgFi.IsReadOnly = true;
-                    }
-
                     await Task.Delay(2000);
                     WindowState = WindowState.Minimized;
                     Process.Start(WowExePath);
@@ -282,37 +375,6 @@ namespace Oracle_Lite
                     PlayButton.IsEnabled = true;
                     PlayButton.Content = "PLAY";
                 });
-            }
-        }
-
-        private static void SetRealmlistPerLocale()
-        {
-            string gamepath = Properties.Settings.Default.GamePath;
-
-            try
-            {
-                string[] locales = new string[] { "enUS", "esMX", "ptBR", "deDE", "enGB", "esES", "frFR", "itIT", "ruRU", "koKR", "zhTW", "zhCN" };
-
-                foreach (var d in Directory.GetDirectories($@"{gamepath}\data"))
-                {
-                    var dir = new DirectoryInfo(d);
-                    var dirName = dir.Name;
-
-                    if (locales.Contains(dirName))
-                    {
-                        string configWTFPath = $@"{gamepath}\data\{dirName}\Realmlist.wtf";
-
-                        var fi = new FileInfo(configWTFPath);
-                        if (fi.Exists && fi.IsReadOnly) fi.IsReadOnly = false;
-                        File.WriteAllText(configWTFPath, "set realmlist \"logon.frostworn.com\"\r\n");
-                        fi.IsReadOnly = true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                string message = $"[File '{Extensions.GetCurrentCallerFileName()}' - Method 'SetRealmlistPerLocale']\r\nException error: {ex.Message}";
-                MessageBox.Show(message);
             }
         }
 

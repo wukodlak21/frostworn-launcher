@@ -176,7 +176,7 @@
     <Resource Include="Resources\Fonts\Philosopher-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="App.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Oracle Lite Logo.ico" />

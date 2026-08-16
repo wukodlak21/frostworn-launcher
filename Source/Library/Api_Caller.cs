@@ -64,5 +64,41 @@ namespace Oracle_Lite.Library
 
             return null;
         }
+
+        public static async Task<Newton_Workloader.ServerStatusResponse> ServerStatusResponse()
+        {
+            string json = string.Empty;
+
+            try
+            {
+                json = await Newton_Workloader.GetServerStatusResponse();
+
+                return Newton_Workloader.ServerStatusResponse.FromJson(json);
+            }
+            catch
+            {
+                // Silent fail - status panel just shows placeholders
+            }
+
+            return null;
+        }
+
+        public static async Task<Newton_Workloader.MostWantedResponse> MostWantedResponse(string realm)
+        {
+            string json = string.Empty;
+
+            try
+            {
+                json = await Newton_Workloader.GetMostWantedResponse(realm);
+
+                return Newton_Workloader.MostWantedResponse.FromJson(json);
+            }
+            catch
+            {
+                // Silent fail - wanted panel just shows placeholders
+            }
+
+            return null;
+        }
     }
 }

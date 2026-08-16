@@ -12,7 +12,7 @@
         WindowStartupLocation="CenterScreen" WindowStyle="None"
         ResizeMode="CanMinimize" RenderOptions.BitmapScalingMode="HighQuality"
         Title="Frostworn" Height="720" Width="1320" Background="{x:Null}"
-        Icon="/Oracle Lite;component/Oracle Lite Logo.ico"
+        Icon="/FrostwornLauncher;component/Oracle Lite Logo.ico"
         Foreground="White" FontFamily="Philosopher" FontSize="15" Loaded="Window_Loaded" MouseLeftButtonDown="Window_MouseLeftButtonDown">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="50" ResizeBorderThickness="1" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
@@ -24,7 +24,7 @@
         <Grid x:Name="MainGrid">
             <Grid Background="#FF0E0D10" VerticalAlignment="Top" Height="35"/>
             <Grid WindowChrome.IsHitTestVisibleInChrome="True" VerticalAlignment="Top" Height="35">
-                <TextBlock HorizontalAlignment="Left" Margin="20,0,0,0" Foreground="#FF868687" VerticalAlignment="Center"><Run Text="Oracle"/><Run Text=" "/><Run Text="Lite" FontWeight="Bold"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="20,0,0,0" Foreground="#FF868687" VerticalAlignment="Center"><Run Text="Frostworn" FontWeight="Bold"/></TextBlock>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Margin="0,0,20,0" VerticalAlignment="Center" Foreground="#FF868687" FontSize="11"><Run Text="version"/><Run Text=" "/><Run x:Name="VersionHolder" Text="0.x"/></TextBlock>
                     <StackPanel Orientation="Horizontal">
@@ -35,7 +35,7 @@
             </Grid>
             <Grid x:Name="ArtworkBackgroundGrid" Margin="1,35,1,80">
                 <Grid.Background>
-                    <ImageBrush x:Name="ArtworkBackgroundHolder" ImageSource="/Oracle Lite;component/Resources/artworks/artwork3.png"/>
+                    <ImageBrush x:Name="ArtworkBackgroundHolder" ImageSource="/FrostwornLauncher;component/Resources/artworks/artwork3.png"/>
                 </Grid.Background>
             </Grid>
             <Grid Margin="1,35,1,80">
@@ -45,8 +45,9 @@
                 <Buttons:SliderControl x:Name="SlideButtonRight" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,40,0" Content="❯" Click="SlideButtonRight_Click" />
                 <!--slide title-->
                 <StackPanel x:Name="spSlideDetails" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="150,0,0,0" >
-                    <TextBlock x:Name="SlideTagHolder" Text="⯌ UPDATES" FontWeight="Bold" FontSize="18" HorizontalAlignment="Left"/>
-                    <TextBlock x:Name="SlideTitleHolder" FontSize="48" Text="Slide Title - 26 January 2024" TextWrapping="Wrap" FontWeight="Bold" Width="500" Margin="0,20,0,0" TextTrimming="CharacterEllipsis" MaxHeight="108"/>
+                    <TextBlock x:Name="SlideTagHolder" Text="⯌ UPDATES" FontFamily="Consolas" FontWeight="Bold" FontSize="12" Foreground="#FF21A843" HorizontalAlignment="Left"/>
+                    <TextBlock x:Name="SlideTitleHolder" FontFamily="/FrostwornLauncher;component/Resources/Fonts/#Philosopher" FontSize="44" Text="Slide Title - 26 January 2024" TextWrapping="Wrap" FontWeight="Bold" Width="560" Margin="0,20,0,0" TextTrimming="CharacterEllipsis" MaxHeight="180"/>
+                    <TextBlock x:Name="SlideMetaHolder" Text="" FontFamily="Consolas" FontSize="12" Foreground="#FF868687" TextWrapping="Wrap" Width="560" Margin="0,14,0,0" Visibility="Collapsed"/>
                     <Button x:Name="ButtonLearnMore" Content="LEARN MORE" Margin="0,20,0,0" HorizontalAlignment="Left" Style="{DynamicResource SliderLearnMoreButton}" Click="ButtonLearnMore_Click"/>
                 </StackPanel>
                 <!-- dots-->
@@ -55,11 +56,86 @@
                     <Buttons:SliderDot IsEnabled="False"/>
                     <Buttons:SliderDot />
                 </StackPanel>
+                <!--server status + most wanted panels-->
+                <StackPanel x:Name="StatusSidebar" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,95,25,0" Width="300">
+                    <Border x:Name="ServerStatusPanel" Margin="0,0,0,14"
+                            Background="#DE17151B" BorderBrush="#FF292531" BorderThickness="1" CornerRadius="6" Padding="16,14">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="SERVER STATUS" FontFamily="Consolas" FontSize="11" Foreground="#FF868687" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Ellipse x:Name="StatusPulseDot" Width="8" Height="8" Fill="#FF868687" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            </Grid>
+                            <Grid Margin="0,0,0,8">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <Ellipse x:Name="IccStatusDot" Width="6" Height="6" Fill="#FF868687" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Legacy X5" VerticalAlignment="Center" FontSize="13"/>
+                                </StackPanel>
+                                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="13" FontFamily="Consolas">
+                                    <Run x:Name="IccOnlineHolder" Text="—" FontWeight="Bold" Foreground="#FF21A843"/><Run Text=" online"/><Run x:Name="IccBotsHolder" Text="" FontSize="11" Foreground="#FF55525C"/>
+                                </TextBlock>
+                            </Grid>
+                            <Grid Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <Ellipse x:Name="PrgStatusDot" Width="6" Height="6" Fill="#FF868687" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Thunderstorm X1" VerticalAlignment="Center" FontSize="13"/>
+                                </StackPanel>
+                                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="13" FontFamily="Consolas">
+                                    <Run x:Name="PrgOnlineHolder" Text="—" FontWeight="Bold" Foreground="#FF21A843"/><Run Text=" online"/><Run x:Name="PrgBotsHolder" Text="" FontSize="11" Foreground="#FF55525C"/>
+                                </TextBlock>
+                            </Grid>
+                            <Border BorderBrush="#FF221F28" BorderThickness="0,1,0,0" Padding="0,8,0,0">
+                                <Grid>
+                                    <TextBlock x:Name="TotalOnlineHolder" Text="— real players" FontFamily="Consolas" FontSize="10" Foreground="#FF55525C" HorizontalAlignment="Left"/>
+                                    <TextBlock x:Name="StatusRefreshedHolder" Text="connecting…" FontFamily="Consolas" FontSize="10" Foreground="#FF55525C" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                    <!--most wanted panel-->
+                    <Border x:Name="MostWantedPanel"
+                            Background="#DE17151B" BorderBrush="#FF292531" BorderThickness="1" CornerRadius="6" Padding="16,14">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="MOST WANTED" FontFamily="Consolas" FontSize="11" Foreground="#FF868687" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="WantedRealmHolder" Text="—" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Foreground="#FFE0483E" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            </Grid>
+                            <StackPanel x:Name="spWantedRows">
+                                <Grid Margin="0,0,0,9">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <TextBlock Text="01" FontFamily="Consolas" FontSize="11" Foreground="#FF55525C" Width="18" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="Wanted1Stars" Text="☆☆☆☆☆" FontSize="10" Foreground="#FFE0483E" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                        <TextBlock x:Name="Wanted1Name" Text="—" FontSize="14" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="Wanted1Bounty" Text="" FontFamily="Consolas" FontSize="12.5" Foreground="#FFD9A441" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,9">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <TextBlock Text="02" FontFamily="Consolas" FontSize="11" Foreground="#FF55525C" Width="18" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="Wanted2Stars" Text="☆☆☆☆☆" FontSize="10" Foreground="#FFE0483E" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                        <TextBlock x:Name="Wanted2Name" Text="—" FontSize="14" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="Wanted2Bounty" Text="" FontFamily="Consolas" FontSize="12.5" Foreground="#FFD9A441" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,10">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <TextBlock Text="03" FontFamily="Consolas" FontSize="11" Foreground="#FF55525C" Width="18" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="Wanted3Stars" Text="☆☆☆☆☆" FontSize="10" Foreground="#FFE0483E" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                        <TextBlock x:Name="Wanted3Name" Text="—" FontSize="14" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="Wanted3Bounty" Text="" FontFamily="Consolas" FontSize="12.5" Foreground="#FFD9A441" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                            </StackPanel>
+                            <Border BorderBrush="#FF221F28" BorderThickness="0,1,0,0" Padding="0,8,0,0">
+                                <TextBlock x:Name="WantedFootHolder" Text="claim a bounty · kill on sight" FontFamily="Consolas" FontSize="10" Foreground="#FF55525C" HorizontalAlignment="Left"/>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </Grid>
             <StackPanel Orientation="Horizontal" Margin="50,50,0,0" VerticalAlignment="Top">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Image Source="/Oracle Lite;component/Resources/Oracle Lite Title Logo.png" Stretch="Uniform" Height="70" Width="70"/>
-                    <TextBlock Text="FROSTWORN" Foreground="White" FontSize="26" FontWeight="Bold" VerticalAlignment="Center" Margin="12,0,0,0" FontFamily="Philosopher"/>
+                    <Image Source="/FrostwornLauncher;component/Resources/Oracle Lite Title Logo.png" Stretch="Uniform" Height="70" Width="70"/>
+                    <TextBlock Text="FROSTWORN" Foreground="White" FontSize="26" FontWeight="Bold" VerticalAlignment="Center" Margin="12,0,0,0" FontFamily="/FrostwornLauncher;component/Resources/Fonts/#Philosopher"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="50,0,0,0">
                     <Button x:Name="ButtonHome" Content="HOME" Style="{DynamicResource ButtonStyleNavbar}" Click="ButtonHome_Click"/>
@@ -78,11 +154,11 @@
                 <CheckBox x:Name="CheckBoxHD" VerticalAlignment="Center" Margin="0,0,15,0" Content=" HD Textures" IsChecked="{Binding HDTextures, Source={x:Static properties:Settings.Default}}" Style="{DynamicResource CheckBoxStyle1}" Foreground="White" FlowDirection="RightToLeft" Checked="CheckBoxHD_Checked" Unchecked="CheckBoxHD_Unchecked"/>
                 <!--SETTINGS BUTTON-->
                 <Button x:Name="ButtonSettings" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" Width="35" Height="35" Style="{DynamicResource SettingsButtonStyle}" Click="ButtonSettings_Click" MouseEnter="ButtonSettings_MouseEnter" MouseLeave="ButtonSettings_MouseLeave">
-                    <Image Source="/Oracle Lite;component/Resources/gear_icon.png"/>
+                    <Image Source="/FrostwornLauncher;component/Resources/gear_icon.png"/>
                 </Button>
                 <!--CHECK UPDATES BUTTON-->
                 <Button x:Name="ButtonCheckUpdates" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" Width="35" Height="35" Style="{DynamicResource SettingsButtonStyle}" Click="ButtonCheckUpdates_Click" MouseEnter="ButtonCheckUpdates_MouseEnter" MouseLeave="ButtonCheckUpdates_MouseLeave">
-                    <Image Source="/Oracle Lite;component/Resources/arrow_clockwise_icon.png"/>
+                    <Image Source="/FrostwornLauncher;component/Resources/arrow_clockwise_icon.png"/>
                 </Button>
                 <!--PLAY BUTTON-->
                 <Button x:Name="PlayButton" Style="{DynamicResource PlayButtonStyle}" Visibility="Visible" IsEnabled="False" Click="PlayButton_Click"/>

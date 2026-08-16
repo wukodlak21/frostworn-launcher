@@ -65,7 +65,7 @@ namespace Oracle_Lite.Controllers
                     mainWindow.ArtworkBackgroundHolder.ImageSource = bitmap;
 
                     Animations.FadeIn(mainWindow.ArtworkBackgroundGrid, 500);
-                    Animations.FadeIn(mainWindow.spSlideDetails, 1500);
+                    Animations.SlideIn(mainWindow.spSlideDetails, 700);
                 }
                 catch (Exception ex)
                 {
@@ -82,9 +82,21 @@ namespace Oracle_Lite.Controllers
                 {
                     Newton_Workloader.HomeSliderResponse slide = SliderCache.homeSliderResponses[index];
 
-                    mainWindow.SlideTagHolder.Text = slide.Tag;
+                    mainWindow.SlideTagHolder.Text = "⯌ " + slide.Tag;
                     mainWindow.SlideTitleHolder.Text = slide.Title;
                     mainWindow.ButtonLearnMore.Tag = slide.Url;
+
+                    if (string.IsNullOrWhiteSpace(slide.Meta))
+                    {
+                        mainWindow.SlideMetaHolder.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        mainWindow.SlideMetaHolder.Text = slide.Meta;
+                        mainWindow.SlideMetaHolder.Visibility = Visibility.Visible;
+                    }
+
+                    mainWindow.RefreshWantedForTag(slide.Tag);
 
                 }
                 catch (Exception ex)
