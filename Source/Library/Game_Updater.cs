@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -96,7 +97,11 @@ namespace Oracle_Lite.Library
         }
 
         /// <summary>
-        /// Returns true or false if file is different or doesn't exist
+        /// Returns true or false if file is different or doesn't exist. A size
+        /// match alone doesn't prove the content is intact - a corrupted file
+        /// of the exact same byte length (bit-flip, partial overwrite) used to
+        /// be silently treated as up to date. When the server provides a
+        /// Sha256, a same-size local file is hashed and compared too.
         /// </summary>
         /// <param name="file"></param>
         /// <returns>true or false</returns>
@@ -111,12 +116,31 @@ namespace Oracle_Lite.Library
 
                 FileInfo localFile = new FileInfo(file.TargetPath);
 
-                return localFile.Length != file.Size;
+                if (localFile.Length != file.Size)
+                    return true;
+
+                if (!string.IsNullOrEmpty(file.Sha256))
+                {
+                    string localHash = ComputeSha256(file.TargetPath);
+                    return !string.Equals(localHash, file.Sha256, StringComparison.OrdinalIgnoreCase);
+                }
+
+                return false;
             }
             catch (Exception)
             {
                 // file doesn't exist
                 return true;
+            }
+        }
+
+        private static string ComputeSha256(string path)
+        {
+            using (var sha256 = SHA256.Create())
+            using (var stream = File.OpenRead(path))
+            {
+                byte[] hash = sha256.ComputeHash(stream);
+                return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
             }
         }
 

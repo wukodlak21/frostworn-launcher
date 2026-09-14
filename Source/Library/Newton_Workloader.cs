@@ -57,6 +57,12 @@ namespace Oracle_Lite.Library
             [JsonProperty("IsHD")]
             public bool IsHD { get; set; }
 
+            // Optional: older API responses (or a request that hit an uncached
+            // path) may omit this - Game_Updater falls back to size-only
+            // comparison when it's null/empty rather than treating that as a mismatch.
+            [JsonProperty("Sha256")]
+            public string Sha256 { get; set; }
+
             [JsonProperty("TargetPath")]
             public string TargetPath { get; set; }
 

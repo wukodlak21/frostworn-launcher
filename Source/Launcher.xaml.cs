@@ -262,11 +262,13 @@ namespace Oracle_Lite
                 string updatePath   = Path.Combine(launcherDir, "_launcher_update.exe");
                 string batPath      = Path.Combine(launcherDir, "_update_launcher.bat");
 
-                using (var wc = new WebClient())
+                var downloader = new ChunkedDownloader
                 {
-                    wc.DownloadProgressChanged += (s, e) => DownloadBar.Value = e.ProgressPercentage;
-                    await wc.DownloadFileTaskAsync(new Uri(response.Url), updatePath);
-                }
+                    IsPaused = () => false, // self-update isn't user-pausable
+                    OnProgress = (totalRead, totalBytes, bytesPerSecond) =>
+                        DownloadBar.Value = (double)totalRead / totalBytes * 100
+                };
+                await downloader.DownloadAsync(response.Url, updatePath, new FileInfo(launcherPath).Length);
 
                 File.WriteAllText(batPath,
                     "@echo off\r\n" +
