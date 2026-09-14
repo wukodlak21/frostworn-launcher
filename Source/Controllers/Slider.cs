@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Oracle_Lite.Library;
 using Oracle_Lite.Cache;
+using Oracle_Lite.Dialogs;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Oracle_Lite.Buttons;
@@ -86,7 +87,7 @@ namespace Oracle_Lite.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"{ex.Message}\r\nFailed to load SliderCache Background bytes reference index: {index}");
+                    Custom_MessageBox.Show($"{ex.Message}\r\nFailed to load SliderCache Background bytes reference index: {index}");
                 }
             }
         }
@@ -118,7 +119,7 @@ namespace Oracle_Lite.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"{ex.Message}\r\nFailed to load slide cache details index: {index}");
+                    Custom_MessageBox.Show($"{ex.Message}\r\nFailed to load slide cache details index: {index}");
                 }
             }
         }
@@ -159,7 +160,7 @@ namespace Oracle_Lite.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"{ex.Message}\r\nFailed at SpawnDots, index: {index }");
+                    Custom_MessageBox.Show($"{ex.Message}\r\nFailed at SpawnDots, index: {index }");
                 }
             }
         }

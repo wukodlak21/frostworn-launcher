@@ -39,6 +39,11 @@ namespace Oracle_Lite
         {
             LogCrash(e.Exception, "UI thread");
 
+            // Intentionally the native MessageBox here, not Custom_MessageBox:
+            // this fires from a genuinely broken app state, and the custom
+            // dialog lives in the same (possibly corrupted) visual tree that
+            // may have just crashed - the native OS dialog doesn't depend on
+            // any of that and is the safer choice for a last-resort handler.
             MessageBox.Show(
                 $"Something went wrong and the launcher needs to close.\n\n{e.Exception.Message}\n\nA log was saved to:\n{CrashLogPath}",
                 "Frostworn Launcher - Unexpected Error",

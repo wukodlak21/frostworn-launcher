@@ -191,6 +191,7 @@
             </Grid>
             <Dialogs:Game_Finder_Dialog x:Name="GameFinderDialog" Visibility="Collapsed"/>
             <Dialogs:Application_Exit_Dialog x:Name="ExitDialog" Visibility="Collapsed"/>
+            <Dialogs:Custom_MessageBox x:Name="CustomMsgBox" Visibility="Collapsed"/>
         </Grid>
     </Border>
 </Window>

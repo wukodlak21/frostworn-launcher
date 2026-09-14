@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Oracle_Lite.Dialogs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -280,7 +281,7 @@ namespace Oracle_Lite.Library
                 // Retries exhausted - stop rather than silently marking this file done.
                 currentFileRetryCount = 0;
                 string failedName = DownloadList.Count > 0 ? DownloadList[0].Name : "a game file";
-                MessageBox.Show(
+                Custom_MessageBox.Show(
                     $"Failed to download {failedName} after several attempts:\n{e.Error.Message}\n\nCheck your connection and press Update again to retry.",
                     "Update Failed",
                     MessageBoxButton.OK,

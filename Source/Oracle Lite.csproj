@@ -81,6 +81,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\Custom_MessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Launcher.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -102,6 +106,9 @@
     </Compile>
     <Compile Include="Dialogs\Application_Exit_Dialog.xaml.cs">
       <DependentUpon>Application_Exit_Dialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Custom_MessageBox.xaml.cs">
+      <DependentUpon>Custom_MessageBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher.xaml.cs">
       <DependentUpon>Launcher.xaml</DependentUpon>

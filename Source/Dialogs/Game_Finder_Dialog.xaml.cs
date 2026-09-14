@@ -48,7 +48,7 @@ namespace Oracle_Lite.Dialogs
 
                             if (!hasWowExe)
                             {
-                                var dlResult = MessageBox.Show(
+                                var dlResult = Custom_MessageBox.Show(
                                     "World of Warcraft not found in the selected folder.\n\nDownload game client? (~17 GB)",
                                     "Game Not Found",
                                     MessageBoxButton.YesNo,
@@ -98,7 +98,7 @@ namespace Oracle_Lite.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    Custom_MessageBox.Show(ex.Message);
                 }
             }
         }

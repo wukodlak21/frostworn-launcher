@@ -1,4 +1,5 @@
 using Oracle_Lite.Controllers;
+using Oracle_Lite.Dialogs;
 using Oracle_Lite.Library;
 using System;
 using System.Collections.Generic;
@@ -444,7 +445,7 @@ namespace Oracle_Lite
                 catch (Exception ex)
                 {
                     string message = $"[File '{Extensions.GetCurrentCallerFileName()}' - Method 'PlayButton_Click']\r\nException error: {ex.Message}";
-                    MessageBox.Show(message);
+                    Custom_MessageBox.Show(message);
                     PlayButton.Content = "PLAY";
                     PlayButton.IsEnabled = true;
                 }
@@ -742,7 +743,7 @@ namespace Oracle_Lite
                 // it needs a person - leave it in a Resume state instead of a
                 // full reset, since the partial file is still on disk either way.
                 DownloadBar.IsIndeterminate = false;
-                MessageBox.Show($"Error: {ex.Message}\n\nYour progress was saved - click Resume to continue.", "Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                Custom_MessageBox.Show($"Error: {ex.Message}\n\nYour progress was saved - click Resume to continue.", "Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 stdDownloadPaused = true;
                 CancelUpdateButton.Content = "Resume";
@@ -805,7 +806,7 @@ namespace Oracle_Lite
             {
                 if (string.Equals(Properties.Settings.Default.GamePath, existingHDPath, StringComparison.OrdinalIgnoreCase))
                 {
-                    MessageBox.Show(
+                    Custom_MessageBox.Show(
                         $"You already have the HD Client installed and active.\n\nLocation: {existingHDPath}",
                         "HD Client",
                         MessageBoxButton.OK,
@@ -813,7 +814,7 @@ namespace Oracle_Lite
                     return;
                 }
 
-                MessageBoxResult switchToHD = MessageBox.Show(
+                MessageBoxResult switchToHD = Custom_MessageBox.Show(
                     $"You already have the HD Client installed.\n\nLocation: {existingHDPath}\n\nSwitch to playing the HD version now?",
                     "HD Client Already Installed",
                     MessageBoxButton.YesNo,
@@ -843,7 +844,7 @@ namespace Oracle_Lite
         /// </summary>
         public void StartHDClientDownload()
         {
-            MessageBoxResult haveIt = MessageBox.Show(
+            MessageBoxResult haveIt = Custom_MessageBox.Show(
                 "The Frostworn HD Client isn't set up in this launcher yet.\n\nYES - I already have it downloaded somewhere, let me point you to the folder.\nNO - Download it now (~40 GB).",
                 "HD Client Setup",
                 MessageBoxButton.YesNoCancel,
@@ -868,7 +869,7 @@ namespace Oracle_Lite
                     Properties.Settings.Default.HDGamePath = existingFolder;
                     Properties.Settings.Default.Save();
 
-                    MessageBoxResult playHD = MessageBox.Show(
+                    MessageBoxResult playHD = Custom_MessageBox.Show(
                         $"Found it!\n\nLocation: {existingFolder}\n\nSwitch to playing the HD version now?",
                         "HD Client Located",
                         MessageBoxButton.YesNo,
@@ -883,7 +884,7 @@ namespace Oracle_Lite
                     return;
                 }
 
-                MessageBoxResult downloadInstead = MessageBox.Show(
+                MessageBoxResult downloadInstead = Custom_MessageBox.Show(
                     "Wow.exe was not found in that folder.\n\nDownload the HD Client instead? (~40 GB)",
                     "HD Client Not Found",
                     MessageBoxButton.YesNo,
@@ -1039,7 +1040,7 @@ namespace Oracle_Lite
                 Properties.Settings.Default.HDGamePath = installDir;
                 Properties.Settings.Default.Save();
 
-                MessageBoxResult playHD = MessageBox.Show(
+                MessageBoxResult playHD = Custom_MessageBox.Show(
                     $"HD Client installed successfully!\n\nLocation: {installDir}\n\nDo you want to switch to playing the HD version now?",
                     "HD Client Ready",
                     MessageBoxButton.YesNo,
@@ -1065,7 +1066,7 @@ namespace Oracle_Lite
                 // it left off instead of forcing the player back through the
                 // whole "where do you want to install it" flow again.
                 DownloadBar.IsIndeterminate = false;
-                MessageBox.Show($"Error: {ex.Message}\n\nYour progress was saved - click Resume to continue.", "HD Client Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                Custom_MessageBox.Show($"Error: {ex.Message}\n\nYour progress was saved - click Resume to continue.", "HD Client Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 hdDownloadPaused = true;
                 ButtonHDClient.Content = "Resume";
