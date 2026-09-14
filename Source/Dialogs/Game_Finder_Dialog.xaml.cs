@@ -44,7 +44,9 @@ namespace Oracle_Lite.Dialogs
                             Properties.Settings.Default.GamePath = fbd.SelectedPath;
                             Properties.Settings.Default.Save();
 
-                            if (!File.Exists(Path.Combine(fbd.SelectedPath, "Wow.exe")))
+                            bool hasWowExe = File.Exists(Path.Combine(fbd.SelectedPath, "Wow.exe"));
+
+                            if (!hasWowExe)
                             {
                                 var dlResult = MessageBox.Show(
                                     "World of Warcraft not found in the selected folder.\n\nDownload game client? (~17 GB)",
@@ -62,20 +64,29 @@ namespace Oracle_Lite.Dialogs
                                 }
                             }
 
-                            // Fix read only permissions on game folder
-                            Process cmd = new Process();
-                            cmd.StartInfo.FileName = "cmd.exe";
-                            cmd.StartInfo.RedirectStandardInput = true;
-                            cmd.StartInfo.RedirectStandardOutput = true;
-                            cmd.StartInfo.CreateNoWindow = true;
-                            cmd.StartInfo.UseShellExecute = false;
-                            cmd.Start();
-                            cmd.StandardInput.WriteLine("taskkill /im Wow.exe");
-                            cmd.StandardInput.WriteLine("cd /d " + @fbd.SelectedPath);
-                            cmd.StandardInput.WriteLine("attrib -r * /s");
-                            cmd.StandardInput.Flush();
-                            cmd.StandardInput.Close();
-                            cmd.WaitForExit();
+                            // Fix read only permissions on the game folder - only when
+                            // there's actually a WoW install there to fix. Running a
+                            // recursive "attrib -r * /s" against an arbitrary folder the
+                            // player picked (no Wow.exe found, declined the download - e.g.
+                            // an empty folder meant for the incremental updater to fill)
+                            // has no reason to touch attributes across whatever else might
+                            // be in there.
+                            if (hasWowExe)
+                            {
+                                Process cmd = new Process();
+                                cmd.StartInfo.FileName = "cmd.exe";
+                                cmd.StartInfo.RedirectStandardInput = true;
+                                cmd.StartInfo.RedirectStandardOutput = true;
+                                cmd.StartInfo.CreateNoWindow = true;
+                                cmd.StartInfo.UseShellExecute = false;
+                                cmd.Start();
+                                cmd.StandardInput.WriteLine("taskkill /im Wow.exe");
+                                cmd.StandardInput.WriteLine("cd /d " + @fbd.SelectedPath);
+                                cmd.StandardInput.WriteLine("attrib -r * /s");
+                                cmd.StandardInput.Flush();
+                                cmd.StandardInput.Close();
+                                cmd.WaitForExit();
+                            }
 
                             mainWindow.CheckForUpdates();
 

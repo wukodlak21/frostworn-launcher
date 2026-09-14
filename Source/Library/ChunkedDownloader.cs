@@ -36,11 +36,11 @@ namespace Oracle_Lite.Library
         /// <summary>Polled between chunks (and between retries) to stop cleanly on Pause.</summary>
         public Func<bool> IsPaused;
 
-        /// <summary>Called periodically (a few times a second) with progress.</summary>
-        public Action<long totalRead, long totalBytes, double bytesPerSecond> OnProgress;
+        /// <summary>Called periodically (a few times a second) with progress: totalRead, totalBytes, bytesPerSecond.</summary>
+        public Action<long, long, double> OnProgress;
 
         /// <summary>Called with a short human-readable status line, e.g. during a retry backoff.</summary>
-        public Action<string status> OnStatus;
+        public Action<string> OnStatus;
 
         public async Task<DownloadOutcome> DownloadAsync(string url, string destinationPath, long knownSizeFallback)
         {
