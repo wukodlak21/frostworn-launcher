@@ -209,33 +209,75 @@ namespace Oracle_Lite.Library
             updater.CancelAsync();
         }
 
+        private const int MaxFileRetries = 5;
+        private int currentFileRetryCount = 0;
+
         /// <summary>
-        /// Event for download completed
+        /// Event for download completed. Previously this only checked
+        /// e.Cancelled and treated ANY other outcome as success - a real
+        /// network failure mid-file (e.Error != null) was silently marked
+        /// done, the file removed from the queue, and the launcher would go
+        /// on to report "UP TO DATE"/"COMPLETED" with a truncated/corrupt file
+        /// left on disk. Now a failed file is deleted and retried a few times
+        /// (with a short, growing delay) - a "check, then continue" step -
+        /// before giving up and surfacing the failure instead of hiding it.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Completed(object sender, AsyncCompletedEventArgs e)
+        private async void Completed(object sender, AsyncCompletedEventArgs e)
         {
             SWSpeed.Reset(); // download speed timer
 
             if (e.Cancelled == true)
             {
+                currentFileRetryCount = 0;
                 OnStopped(e);
+                return;
             }
-            else
+
+            if (e.Error != null)
             {
-                TotalSizeDownloaded += DownloadList[0].Size;
+                currentFileRetryCount++;
 
-                DownloadList.RemoveAt(0);
+                if (currentFileRetryCount <= MaxFileRetries && DownloadList.Count > 0)
+                {
+                    string failedPath = DownloadList[0].TargetPath;
+                    if (File.Exists(failedPath))
+                    {
+                        try { File.Delete(failedPath); }
+                        catch { /* best-effort - the retry will overwrite it anyway */ }
+                    }
 
-                if (DownloadList.Count > 0) // continue what's left
-                {
-                    Start();
+                    await Task.Delay(TimeSpan.FromSeconds(Math.Min(10, 2 * currentFileRetryCount)));
+                    Start(); // retries DownloadList[0]
+                    return;
                 }
-                else // all downloads completed
-                {
-                    OnCompleted(e);
-                }
+
+                // Retries exhausted - stop rather than silently marking this file done.
+                currentFileRetryCount = 0;
+                string failedName = DownloadList.Count > 0 ? DownloadList[0].Name : "a game file";
+                MessageBox.Show(
+                    $"Failed to download {failedName} after several attempts:\n{e.Error.Message}\n\nCheck your connection and press Update again to retry.",
+                    "Update Failed",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+                OnStopped(e); // e.Error is already set (AsyncCompletedEventArgs' constructor is protected, so this is reused, not rebuilt)
+                return;
+            }
+
+            currentFileRetryCount = 0;
+            TotalSizeDownloaded += DownloadList[0].Size;
+
+            DownloadList.RemoveAt(0);
+
+            if (DownloadList.Count > 0) // continue what's left
+            {
+                Start();
+            }
+            else // all downloads completed
+            {
+                OnCompleted(e);
             }
         }
     }

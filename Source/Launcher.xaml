@@ -160,19 +160,26 @@
                 <Button x:Name="ButtonCheckUpdates" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" Width="35" Height="35" Style="{DynamicResource SettingsButtonStyle}" Click="ButtonCheckUpdates_Click" MouseEnter="ButtonCheckUpdates_MouseEnter" MouseLeave="ButtonCheckUpdates_MouseLeave">
                     <Image Source="/FrostwornLauncher;component/Resources/arrow_clockwise_icon.png"/>
                 </Button>
-                <!--PLAY BUTTON-->
-                <Button x:Name="PlayButton" Style="{DynamicResource PlayButtonStyle}" Visibility="Visible" IsEnabled="False" Click="PlayButton_Click"/>
-                <!--UPDATE BUTTON-->
-                <Button x:Name="UpdateButton" Style="{DynamicResource UpdateButtonStyle}" Visibility="Collapsed" Click="UpdateButton_Click"/>
-                <!--CANCEL BUTTON-->
-                <Button x:Name="CancelUpdateButton" Style="{DynamicResource CancelUpdateButtonStyle}" Visibility="Collapsed" Click="CancelUpdateButton_Click"/>
+                <!--PLAY BUTTON + HD CLIENT DOWNLOAD BUTTON STACKED ABOVE IT-->
+                <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+                    <!--HD CLIENT DOWNLOAD BUTTON-->
+                    <Button x:Name="ButtonHDClient" Content="Download HD Client" HorizontalAlignment="Center" Margin="0,0,0,10" Style="{DynamicResource HDClientButtonStyle}" Click="ButtonHDClient_Click"/>
+                    <StackPanel Orientation="Horizontal">
+                        <!--PLAY BUTTON-->
+                        <Button x:Name="PlayButton" Style="{DynamicResource PlayButtonStyle}" Visibility="Visible" IsEnabled="False" Click="PlayButton_Click"/>
+                        <!--UPDATE BUTTON-->
+                        <Button x:Name="UpdateButton" Style="{DynamicResource UpdateButtonStyle}" Visibility="Collapsed" Click="UpdateButton_Click"/>
+                        <!--CANCEL BUTTON-->
+                        <Button x:Name="CancelUpdateButton" Style="{DynamicResource CancelUpdateButtonStyle}" Visibility="Collapsed" Click="CancelUpdateButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
             <Popups:Mouseover_Popup x:Name="SettingsPopup" HorizontalAlignment="Left" Margin="957,468,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
             <Popups:Mouseover_Popup x:Name="CheckUpdatesPopup" HorizontalAlignment="Left" Margin="1007,468,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
             <!--DOWNLOADS-->
             <Grid VerticalAlignment="Bottom" Height="80">
                 <StackPanel Orientation="Horizontal" Margin="25,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
-                    <TextBlock Text="{Binding Value, ElementName=DownloadBar, StringFormat=\{0\}%}" Foreground="#FF21A843" FontWeight="Bold" FontSize="32" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Value, ElementName=DownloadBar, StringFormat=\{0:0.00\}%}" Foreground="#FF21A843" FontWeight="Bold" FontSize="32" VerticalAlignment="Center"/>
                     <TextBlock x:Name="StatusHolder" Text="IN PROGRESS.." Margin="15,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
                     <TextBlock x:Name="TipHolder" Text="Press the Start button to run the game." Margin="15,0,0,0" VerticalAlignment="Center" FontWeight="Bold" Foreground="#FF868687"/>
                 </StackPanel>

@@ -8,9 +8,8 @@
     <Border CornerRadius="10" Background="White" Padding="25,10,25,5" MaxWidth="250">
         <StackPanel Orientation="Vertical">
             <Button x:Name="ButtonDiscord" Content="Discord" Style="{DynamicResource SubmenuButton}" Click="ButtonDiscord_Click"/>
-            <Button x:Name="ButtonFacebook" Content="Facebook" Style="{DynamicResource SubmenuButton}" Click="ButtonFacebook_Click"/>
-            <Button x:Name="ButtonTwitter" Content="Twitter" Style="{DynamicResource SubmenuButton}" Click="ButtonTwitter_Click"/>
             <Button x:Name="ButtonInstagram" Content="Instagram" Style="{DynamicResource SubmenuButton}" Click="ButtonInstagram_Click"/>
+            <Button x:Name="ButtonTikTok" Content="TikTok" Style="{DynamicResource SubmenuButton}" Click="ButtonTikTok_Click"/>
         </StackPanel>
     </Border>
 </UserControl>

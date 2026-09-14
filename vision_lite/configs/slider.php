@@ -14,9 +14,9 @@ $slider =
 [
     [
         'background_url'    => 'https://frostworn.com/vision_lite/assets/slides/slide1.png',
-        'tag'               => 'LEGACY X5',
-        'title'             => 'New Players Get a Free Starter Gift',
-        'meta'              => 'Legacy X5 only · delivered automatically on your first login',
+        'tag'               => 'HD CLIENT',
+        'title'             => 'Play Frostworn in HD - New Client Available',
+        'meta'              => 'Click "Download HD Client" above Start · standard client stays untouched',
         'url'               => 'https://frostworn.com',
     ],
     [
@@ -28,10 +28,10 @@ $slider =
     ],
     [
         'background_url'    => 'https://frostworn.com/vision_lite/assets/slides/slide3.png',
-        'tag'               => 'LEGACY X5',
-        'title'             => 'Blood Prince Council Door Bug Fixed',
-        'meta'              => 'Fixed on Legacy X5 & Thunderstorm X1',
-        'url'               => 'https://frostworn.com',
+        'tag'               => 'DISCORD',
+        'title'             => 'New FAQ Bot & Raid Guides on Discord',
+        'meta'              => '80+ topics answered instantly · 9 raid guides in #raid-guides',
+        'url'               => 'https://discord.gg/63KSeFK3B',
     ],
     [
         'background_url'    => 'https://frostworn.com/vision_lite/assets/slides/slide4.png',

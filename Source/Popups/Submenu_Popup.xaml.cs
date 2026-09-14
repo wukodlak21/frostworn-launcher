@@ -16,28 +16,21 @@ namespace Oracle_Lite.Popups
 
         private void ButtonDiscord_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://discord.gg/myserver");
-
-            Visibility = Visibility.Collapsed;
-        }
-
-        private void ButtonFacebook_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://facebook.com/myserver");
-
-            Visibility = Visibility.Collapsed;
-        }
-
-        private void ButtonTwitter_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://twitter.com/myserver");
+            Process.Start("https://discord.gg/63KSeFK3B");
 
             Visibility = Visibility.Collapsed;
         }
 
         private void ButtonInstagram_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://instagram.com/myserver");
+            Process.Start("https://instagram.com/frostwornicecrownpremium");
+
+            Visibility = Visibility.Collapsed;
+        }
+
+        private void ButtonTikTok_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("https://www.tiktok.com/@frostwornicecrownpremium");
 
             Visibility = Visibility.Collapsed;
         }

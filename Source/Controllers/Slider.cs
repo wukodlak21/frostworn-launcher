@@ -21,6 +21,23 @@ namespace Oracle_Lite.Controllers
 
         public static void Start()
         {
+            if (SliderCache.Backgrounds.Count == 0)
+            {
+                // No promo content available (API/images unreachable at startup) -
+                // hide the slider pieces instead of crashing on an empty list.
+                // StatusSidebar (server status / most wanted) is a sibling element
+                // and is untouched - it has its own independent API call.
+                if (Application.Current.MainWindow is Launcher mw)
+                {
+                    mw.ArtworkBackgroundGrid.Visibility = Visibility.Collapsed;
+                    mw.spSlideDetails.Visibility = Visibility.Collapsed;
+                    mw.spSliderDots.Visibility = Visibility.Collapsed;
+                    mw.SlideButtonLeft.Visibility = Visibility.Collapsed;
+                    mw.SlideButtonRight.Visibility = Visibility.Collapsed;
+                }
+                return;
+            }
+
             SpawnDots();
 
             slider_index = 0;
@@ -167,6 +184,8 @@ namespace Oracle_Lite.Controllers
 
         public static void GoPrevious()
         {
+            if (SliderCache.Backgrounds.Count == 0) return;
+
             slider_timer.Stop();
 
             slider_index = (slider_index - 1) % SliderCache.Backgrounds.Count;
@@ -187,6 +206,8 @@ namespace Oracle_Lite.Controllers
 
         public static void GoNext()
         {
+            if (SliderCache.Backgrounds.Count == 0) return;
+
             slider_timer.Stop();
 
             slider_index = (slider_index + 1) % SliderCache.Backgrounds.Count;

@@ -135,6 +135,7 @@
   <ItemGroup>
     <Compile Include="Library\Animations.cs" />
     <Compile Include="Library\Api_Caller.cs" />
+    <Compile Include="Library\ChunkedDownloader.cs" />
     <Compile Include="Library\Extensions.cs" />
     <Compile Include="Library\Game_Updater.cs" />
     <Compile Include="Library\Newton_Workloader.cs" />

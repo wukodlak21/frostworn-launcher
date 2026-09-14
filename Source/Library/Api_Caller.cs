@@ -9,19 +9,19 @@ namespace Oracle_Lite.Library
     {
         public static async Task<List<Newton_Workloader.HomeSliderResponse>> HomeSliderResponse()
         {
-            string json = string.Empty;
-
             try
             {
-                json = await Newton_Workloader.GetHomeSliderResponse();
+                string json = await Newton_Workloader.GetHomeSliderResponse();
 
                 return Newton_Workloader.HomeSliderResponse.FromJson(json);
             }
-            catch (Exception ex)
+            catch
             {
-                string message = $"[File '{Extensions.GetCurrentCallerFileName()}' - Method 'HomeSliderResponse']\r\nException error: {ex.Message}\r\nApi message: {json}";
-
-                MessageBox.Show(message);
+                // Silent fail - the promo slider is decorative and SliderCache
+                // already handles an empty/failed result gracefully. A raw
+                // technical MessageBox here on a routine network hiccup would
+                // scare players for no reason (this used to block the whole
+                // launcher from opening at all).
             }
 
             return null;
@@ -29,19 +29,18 @@ namespace Oracle_Lite.Library
 
         public static async Task<List<Newton_Workloader.GameFilesListResponse>> GameFilesListResponse()
         {
-            string json = string.Empty;
-
             try
             {
-                json = await Newton_Workloader.GetGameFilesListResponse();
+                string json = await Newton_Workloader.GetGameFilesListResponse();
 
                 return Newton_Workloader.GameFilesListResponse.FromJson(json);
             }
-            catch (Exception ex)
+            catch
             {
-                string message = $"[File '{Extensions.GetCurrentCallerFileName()}' - Method 'GameFilesListResponse']\r\nException error: {ex.Message}\r\nApi message: {json}";
-
-                MessageBox.Show(message);
+                // Silent fail - Game_Updater.UpdateList() treats a null result
+                // as "nothing to update" and CheckForUpdates() just reports
+                // "UP TO DATE" until the next check succeeds, instead of
+                // showing a raw technical popup for a routine network hiccup.
             }
 
             return null;

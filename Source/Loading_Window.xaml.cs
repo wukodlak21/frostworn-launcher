@@ -15,17 +15,23 @@ namespace Oracle_Lite
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (await SliderCache.Update(LoadingBar))
+            // The promo slider is decorative - a slow/unavailable API or a single
+            // broken slide image must never prevent the player from reaching the
+            // Play button, so SliderCache.Update() is best-effort and this always
+            // proceeds to open the main window regardless of what it returns.
+            try
             {
-                Launcher launcher = new Launcher();
-                Application.Current.MainWindow = launcher;
-                launcher.Show();
-                Close();
+                await SliderCache.Update(LoadingBar);
             }
-            else
+            catch
             {
-                MessageBox.Show("Could not load launcher data, please contact and administrator!");
+                // Ignored - Slider.Start() handles an empty/partial cache gracefully.
             }
+
+            Launcher launcher = new Launcher();
+            Application.Current.MainWindow = launcher;
+            launcher.Show();
+            Close();
         }
     }
 }
