@@ -32,12 +32,24 @@ jobs:
       run: |
         $ilrepack = (Get-ChildItem -Path "ilrepack_tools" -Filter "ILRepack.exe" -Recurse | Select-Object -First 1).FullName
         Write-Host "ILRepack path: $ilrepack"
-        & $ilrepack /out:"Source\bin\Release\FrostwornLauncher-merged.exe" `
+        # ILRepack names the merged assembly's own internal identity after the
+        # /out: file's base name (not the primary input's name) - outputting to
+        # "...-merged.exe" and renaming the FILE back afterward leaves the file
+        # named correctly but the assembly's internal manifest name stuck as
+        # "FrostwornLauncher-merged". WPF's compiled BAML pack-URI resolution
+        # (App.InitializeComponent -> Assembly.Load("FrostwornLauncher")) needs
+        # an EXACT internal name match, so that mismatch made every build crash
+        # on startup with a FileNotFoundException/FileLoadException - the file
+        # ran, but WPF couldn't find its own resources under its own name.
+        # Fix: output to a different DIRECTORY but the SAME file name, so
+        # ILRepack's inferred internal name is "FrostwornLauncher" from the start.
+        New-Item -ItemType Directory -Force -Path "Source\bin\Release-merged" | Out-Null
+        & $ilrepack /out:"Source\bin\Release-merged\FrostwornLauncher.exe" `
           /target:winexe `
           "Source\bin\Release\FrostwornLauncher.exe" `
           "Source\bin\Release\Newtonsoft.Json.dll"
         Remove-Item "Source\bin\Release\FrostwornLauncher.exe"
-        Rename-Item "Source\bin\Release\FrostwornLauncher-merged.exe" "FrostwornLauncher.exe"
+        Move-Item "Source\bin\Release-merged\FrostwornLauncher.exe" "Source\bin\Release\FrostwornLauncher.exe"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
