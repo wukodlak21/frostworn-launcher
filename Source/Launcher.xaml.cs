@@ -121,6 +121,14 @@ namespace Oracle_Lite
             if (string.IsNullOrEmpty(Properties.Settings.Default.GamePath) || string.IsNullOrWhiteSpace(Properties.Settings.Default.GamePath))
             {
                 GameFinderDialog.Show();
+
+                // ButtonSettings starts disabled above and is normally only
+                // re-enabled by CheckForUpdates() completing - which never
+                // happens on a first run with no GamePath yet. Without this,
+                // clicking Cancel on the dialog left the gear icon (the only
+                // way to reopen it) permanently dead for the rest of the
+                // session, with no way back in short of restarting the app.
+                ButtonSettings.IsEnabled = true;
             }
             else
             {
