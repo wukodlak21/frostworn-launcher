@@ -670,6 +670,35 @@ namespace Oracle_Lite
                     return;
                 }
 
+                // Best-effort integrity check before spending minutes extracting
+                // a potentially corrupted multi-GB file - the zip format's own
+                // per-entry CRC32 (checked during extraction) already catches
+                // most corruption, but this fails faster with a clear message
+                // instead of a cryptic mid-extraction crash. A null result
+                // (sidecar unreachable) is not treated as a failure - this
+                // check is a bonus, not the only line of defense.
+                StatusHolder.Text = "VERIFYING...";
+                TipHolder.Text = "Checking download integrity...";
+                DownloadBar.Value = 0;
+
+                bool? verified = await ChunkedDownloader.VerifyIntegrityAsync(
+                    StandardClientZipUrl, stdTempZip, percent => DownloadBar.Value = percent);
+
+                if (verified == false)
+                {
+                    File.Delete(stdTempZip);
+                    Custom_MessageBox.Show(
+                        "The downloaded file appears to be corrupted (checksum mismatch).\n\nYour progress was reset - click Resume to download it again.",
+                        "Download Verification Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    stdDownloadPaused = true;
+                    CancelUpdateButton.Content = "Resume";
+                    CancelUpdateButton.IsEnabled = true;
+                    StatusHolder.Text = "PAUSED";
+                    TipHolder.Text = "Download paused. Click Resume to continue.";
+                    return;
+                }
+
                 StatusHolder.Text = "EXTRACTING...";
                 TipHolder.Text = "Please wait, extracting game files...";
                 DownloadBar.IsIndeterminate = true;
@@ -958,6 +987,32 @@ namespace Oracle_Lite
                 if (outcome == DownloadOutcome.Paused)
                 {
                     // Leave the partial file in place; next click resumes via Range header
+                    return;
+                }
+
+                // Best-effort integrity check before spending time extracting a
+                // potentially corrupted ~40 GB file - see the standard client's
+                // RunStandardClientDownload for the full rationale. A null
+                // result (sidecar unreachable) is not treated as a failure.
+                StatusHolder.Text = "VERIFYING...";
+                TipHolder.Text = "Checking download integrity...";
+                DownloadBar.Value = 0;
+
+                bool? verified = await ChunkedDownloader.VerifyIntegrityAsync(
+                    HDClientZipUrl, hdTempZip, percent => DownloadBar.Value = percent);
+
+                if (verified == false)
+                {
+                    File.Delete(hdTempZip);
+                    Custom_MessageBox.Show(
+                        "The downloaded file appears to be corrupted (checksum mismatch).\n\nYour progress was reset - click Resume to download it again.",
+                        "Download Verification Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    hdDownloadPaused = true;
+                    ButtonHDClient.Content = "Resume";
+                    ButtonHDClient.IsEnabled = true;
+                    StatusHolder.Text = "PAUSED";
+                    TipHolder.Text = "Download paused. Click Resume to continue.";
                     return;
                 }
 

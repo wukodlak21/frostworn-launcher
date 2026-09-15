@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Oracle_Lite.Library
@@ -187,6 +188,80 @@ namespace Oracle_Lite.Library
             }
 
             return DownloadOutcome.Completed;
+        }
+
+        /// <summary>
+        /// Best-effort post-download integrity check: fetches "&lt;url&gt;.sha256"
+        /// (a plain-text sidecar file published next to the zip, containing
+        /// just the 64-character hex digest) and compares it against a
+        /// freshly computed SHA256 of the local file. Returns true if it
+        /// matches, false if it's a CONFIRMED mismatch (the file is
+        /// corrupted and should be discarded so the player doesn't sit
+        /// through an extraction that will fail anyway), or null if the
+        /// check itself couldn't be completed (sidecar missing, network
+        /// hiccup) - a null result must never block the player, since this
+        /// is a bonus check on top of the zip format's own per-entry CRC32
+        /// validation during extraction, not the only line of defense.
+        /// </summary>
+        public static async Task<bool?> VerifyIntegrityAsync(string url, string filePath, Action<double> onProgress)
+        {
+            string expectedHash;
+            try
+            {
+                using (var http = new HttpClient())
+                {
+                    http.Timeout = TimeSpan.FromSeconds(20);
+                    expectedHash = (await http.GetStringAsync(url + ".sha256")).Trim().ToLowerInvariant();
+                }
+            }
+            catch
+            {
+                return null;
+            }
+
+            if (expectedHash.Length != 64 || !IsHex(expectedHash))
+                return null;
+
+            string actualHash = await ComputeSha256WithProgressAsync(filePath, onProgress);
+            return string.Equals(expectedHash, actualHash, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsHex(string s)
+        {
+            foreach (char c in s)
+            {
+                bool isHexChar = (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f');
+                if (!isHexChar) return false;
+            }
+            return true;
+        }
+
+        private static async Task<string> ComputeSha256WithProgressAsync(string filePath, Action<double> onProgress)
+        {
+            using (var sha256 = SHA256.Create())
+            using (var stream = File.OpenRead(filePath))
+            {
+                byte[] buffer = new byte[1024 * 1024];
+                long totalRead = 0;
+                long totalSize = stream.Length;
+                DateTime lastUpdate = DateTime.Now;
+
+                int read;
+                while ((read = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                {
+                    sha256.TransformBlock(buffer, 0, read, buffer, 0);
+                    totalRead += read;
+
+                    if ((DateTime.Now - lastUpdate).TotalMilliseconds >= 250)
+                    {
+                        lastUpdate = DateTime.Now;
+                        onProgress?.Invoke(totalSize > 0 ? (double)totalRead / totalSize * 100 : 0);
+                    }
+                }
+
+                sha256.TransformFinalBlock(new byte[0], 0, 0);
+                return BitConverter.ToString(sha256.Hash).Replace("-", "").ToLowerInvariant();
+            }
         }
     }
 }
