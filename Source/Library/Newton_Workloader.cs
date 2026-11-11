@@ -57,6 +57,11 @@ namespace Oracle_Lite.Library
             [JsonProperty("IsHD")]
             public bool IsHD { get; set; }
 
+            // Launcher 1.1: files only for the standard client (Classless set, radio, addons).
+            // Skipped when the player plays the HD client. Sent only to a launcher that asks for them.
+            [JsonProperty("IsSDOnly")]
+            public bool IsSDOnly { get; set; }
+
             // Optional: older API responses (or a request that hit an uncached
             // path) may omit this - Game_Updater falls back to size-only
             // comparison when it's null/empty rather than treating that as a mismatch.
@@ -80,6 +85,7 @@ namespace Oracle_Lite.Library
             return await JsonTool.GetStringFromPOST(Properties.Settings.Default.ApiTarget, new Dictionary<string, string>
             {
                 { "execute", "2" },
+                { "sdonly", "1" }, // Launcher 1.1+: also list the standard-client-only files
             });
         }
         #endregion

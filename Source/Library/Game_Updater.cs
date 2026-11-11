@@ -59,8 +59,15 @@ namespace Oracle_Lite.Library
             {
                 Launcher launcherWindow = Application.Current.MainWindow as Launcher;
 
+                bool playingHD = IsHDClient();
+
                 foreach (Newton_Workloader.GameFilesListResponse file in gameFilesList)
                 {
+                    // Launcher 1.1: the Classless set, the radio and the new addons are made for the
+                    // standard client only - an HD client is left exactly as it is.
+                    if (file.IsSDOnly && playingHD)
+                        continue;
+
                     file.TargetPath = Properties.Settings.Default.GamePath + file.TargetPath;
 
                     await Task.Delay(5);
@@ -165,11 +172,92 @@ namespace Oracle_Lite.Library
                         Directory.CreateDirectory(Path.GetDirectoryName(file.TargetPath));
 
                 launcherWindow.StatusHolder.Text = $"DOWNLOADING {file.Name}";
+                PrepareForReplace(file.TargetPath);
                 DownloadFile(file.Url, file.TargetPath);
 
                 return true;
             }
 
+            return false;
+        }
+
+        /// <summary>
+        /// True when the selected game folder is the HD client.
+        /// </summary>
+        public static bool IsHDClient()
+        {
+            try
+            {
+                string game = Properties.Settings.Default.GamePath;
+                string hd = Properties.Settings.Default.HDGamePath;
+                if (string.IsNullOrWhiteSpace(game) || string.IsNullOrWhiteSpace(hd))
+                    return false;
+                return string.Equals(Path.GetFullPath(game).TrimEnd('\\', '/'),
+                                     Path.GetFullPath(hd).TrimEnd('\\', '/'),
+                                     StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Launcher 1.1: before a file is overwritten -
+        ///  * Wow.exe: the player's own copy is kept once as Wow.exe.frostworn-original;
+        ///  * dinput8.dll: a different mod's dinput8.dll (ReShade and the like) is kept as
+        ///    dinput8_chain.dll, which the Frostworn radio loads in turn, so that mod keeps working.
+        /// Called again on every retry, so everything here is safe to repeat.
+        /// </summary>
+        private static void PrepareForReplace(string targetPath)
+        {
+            try
+            {
+                if (!File.Exists(targetPath))
+                    return;
+
+                string name = Path.GetFileName(targetPath);
+                string dir = Path.GetDirectoryName(targetPath);
+
+                if (name.Equals("Wow.exe", StringComparison.OrdinalIgnoreCase))
+                {
+                    string original = Path.Combine(dir, "Wow.exe.frostworn-original");
+                    if (!File.Exists(original))
+                        File.Copy(targetPath, original);
+                }
+                else if (name.Equals("dinput8.dll", StringComparison.OrdinalIgnoreCase) && !IsFrostwornRadioDll(targetPath))
+                {
+                    string chain = Path.Combine(dir, "dinput8_chain.dll");
+                    string kept = File.Exists(chain) ? Path.Combine(dir, "dinput8.dll.replaced-by-frostworn") : chain;
+                    if (File.Exists(kept))
+                        File.Delete(kept);
+                    File.Move(targetPath, kept);
+                }
+            }
+            catch
+            {
+                // best-effort: the download still replaces the file
+            }
+        }
+
+        private static bool IsFrostwornRadioDll(string path)
+        {
+            try
+            {
+                byte[] data = File.ReadAllBytes(path);
+                byte[] marker = System.Text.Encoding.ASCII.GetBytes("Frostworn Live Radio");
+                for (int i = 0; i + marker.Length <= data.Length; i++)
+                {
+                    int j = 0;
+                    while (j < marker.Length && data[i + j] == marker[j])
+                        j++;
+                    if (j == marker.Length)
+                        return true;
+                }
+            }
+            catch
+            {
+            }
             return false;
         }
 

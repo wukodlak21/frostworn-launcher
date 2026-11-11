@@ -435,9 +435,20 @@ namespace Oracle_Lite
                        catch { }
                     }
 
+                    // Launcher 1.1: keep the Classless (enGB) data set in step with enUS
+                    string localeProblem = Locale_Set.Ensure(gamepath);
+                    if (localeProblem != null)
+                        Custom_MessageBox.Show(localeProblem, "Classless realm", MessageBoxButton.OK, MessageBoxImage.Warning);
+
                     await Task.Delay(2000);
                     WindowState = WindowState.Minimized;
-                    Process.Start(WowExePath);
+                    // Started from its own folder: the realm switch helper (Frostworn-restart-*.bat)
+                    // and the game's relative paths are found from there.
+                    Process.Start(new ProcessStartInfo(WowExePath)
+                    {
+                        WorkingDirectory = gamepath,
+                        UseShellExecute = true,
+                    });
 
                     PlayButton.Content = "PLAY";
                     PlayButton.IsEnabled = true;
@@ -536,6 +547,11 @@ namespace Oracle_Lite
             TipHolder.Visibility = Visibility.Visible;
             TipHolder.Text = "Press the Start button to run the game.";
             StatusHolder.Text = "COMPLETED";
+
+            // Launcher 1.1: build / refresh the Classless (enGB) data set right after the update
+            string localeProblem = Locale_Set.Ensure(Properties.Settings.Default.GamePath);
+            if (localeProblem != null)
+                Custom_MessageBox.Show(localeProblem, "Classless realm", MessageBoxButton.OK, MessageBoxImage.Warning);
             ButtonSettings.IsEnabled = true;
             ButtonCheckUpdates.IsEnabled = true;
             CheckBoxHD.IsEnabled = true;

@@ -28,7 +28,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -145,6 +146,7 @@
     <Compile Include="Library\ChunkedDownloader.cs" />
     <Compile Include="Library\Extensions.cs" />
     <Compile Include="Library\Game_Updater.cs" />
+    <Compile Include="Library\Locale_Set.cs" />
     <Compile Include="Library\Newton_Workloader.cs" />
     <Compile Include="Loading_Window.xaml.cs">
       <DependentUpon>Loading_Window.xaml</DependentUpon>
