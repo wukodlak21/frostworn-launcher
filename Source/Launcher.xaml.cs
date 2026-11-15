@@ -171,7 +171,8 @@ namespace Oracle_Lite
             }
 
             var icc = response.Realms.FirstOrDefault(r => r.Key == "ICC");
-            var prg = response.Realms.FirstOrDefault(r => r.Key == "PRG");
+            // 1.2: the second row shows Chimera (CHM); the "Prg*" controls are that row.
+            var prg = response.Realms.FirstOrDefault(r => r.Key == "CHM");
 
             IccOnlineHolder.Text = icc != null ? icc.Online.ToString("N0") : "—";
             PrgOnlineHolder.Text = prg != null ? prg.Online.ToString("N0") : "—";
@@ -189,10 +190,10 @@ namespace Oracle_Lite
             string realmKey = "ICC";
             string realmLabel = "LEGACY X5";
 
-            if (string.Equals(slideTag, "THUNDERSTORM X1", StringComparison.OrdinalIgnoreCase))
+            if (slideTag != null && slideTag.StartsWith("CHIMERA", StringComparison.OrdinalIgnoreCase))
             {
-                realmKey = "PRG";
-                realmLabel = "THUNDERSTORM X1";
+                realmKey = "CHM";
+                realmLabel = "CHIMERA X5";
             }
 
             if (realmKey == lastWantedRealmKey) return;
