@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace Oracle_Lite.Library
 {
@@ -73,7 +74,7 @@ namespace Oracle_Lite.Library
         }
 
         /// <summary>
-        /// True when this game folder has the Classless patches (only the standard client gets them).
+        /// True when this game folder has the Classless patches (standard client since 1.1, HD since 1.3).
         /// </summary>
         public static bool HasClassless(string gamePath)
         {
@@ -105,7 +106,10 @@ namespace Oracle_Lite.Library
                 if (name.IndexOf(".bak", StringComparison.OrdinalIgnoreCase) >= 0)
                     continue;
 
-                string heroName = name.Replace(StockLocale, HeroLocale);
+                // Launcher 1.3: the HD client spells its files in lower case (locale-enus.mpq,
+                // patch-enus-k.mpq); a case-sensitive Replace left them under their enUS names,
+                // which the game never loads from Data\enGB.
+                string heroName = Regex.Replace(name, StockLocale, HeroLocale, RegexOptions.IgnoreCase);
                 if (Delivered.Contains(heroName))
                     continue;
 

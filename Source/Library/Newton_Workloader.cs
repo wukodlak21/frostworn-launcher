@@ -62,6 +62,11 @@ namespace Oracle_Lite.Library
             [JsonProperty("IsSDOnly")]
             public bool IsSDOnly { get; set; }
 
+            // Launcher 1.3: the Classless set built for the HD client. Skipped on the standard
+            // client. Sent only to a launcher that asks for it (hdonly=1).
+            [JsonProperty("IsHDOnly")]
+            public bool IsHDOnly { get; set; }
+
             // Optional: older API responses (or a request that hit an uncached
             // path) may omit this - Game_Updater falls back to size-only
             // comparison when it's null/empty rather than treating that as a mismatch.
@@ -86,6 +91,7 @@ namespace Oracle_Lite.Library
             {
                 { "execute", "2" },
                 { "sdonly", "1" }, // Launcher 1.1+: also list the standard-client-only files
+                { "hdonly", "1" }, // Launcher 1.3+: also list the HD-client-only files
             });
         }
         #endregion

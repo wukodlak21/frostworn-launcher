@@ -63,9 +63,13 @@ namespace Oracle_Lite.Library
 
                 foreach (Newton_Workloader.GameFilesListResponse file in gameFilesList)
                 {
-                    // Launcher 1.1: the Classless set, the radio and the new addons are made for the
-                    // standard client only - an HD client is left exactly as it is.
+                    // Launcher 1.1: the Classless set, the radio and the new addons built for the
+                    // standard client - skipped on the HD client.
                     if (file.IsSDOnly && playingHD)
+                        continue;
+                    // Launcher 1.3: the same set built for the HD client (its own data, glue and
+                    // Wow.exe) - skipped on the standard client.
+                    if (file.IsHDOnly && !playingHD)
                         continue;
 
                     file.TargetPath = Properties.Settings.Default.GamePath + file.TargetPath;
