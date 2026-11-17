@@ -280,13 +280,24 @@ namespace Oracle_Lite
                 };
                 await downloader.DownloadAsync(response.Url, updatePath, new FileInfo(launcherPath).Length);
 
+                // Launcher 1.3: the old script deleted itself ("del %~f0") BEFORE the
+                // "start" line, and cmd cannot read past a batch file that no longer
+                // exists - so the new launcher never started and the player had to open
+                // it again by hand. Now: retry the copy until the old exe is released
+                // (up to ~30 s), start the new launcher, and only then delete the
+                // script with the (goto) idiom, which ends the script cleanly.
                 File.WriteAllText(batPath,
                     "@echo off\r\n" +
-                    "timeout /t 2 /nobreak > nul\r\n" +
-                    $"copy /y \"{updatePath}\" \"{launcherPath}\"\r\n" +
-                    $"del \"{updatePath}\"\r\n" +
-                    $"del \"%~f0\"\r\n" +
-                    $"start \"\" \"{launcherPath}\"\r\n"
+                    "set tries=0\r\n" +
+                    ":wait\r\n" +
+                    "timeout /t 1 /nobreak > nul\r\n" +
+                    $"copy /y \"{updatePath}\" \"{launcherPath}\" > nul 2>&1 && goto copied\r\n" +
+                    "set /a tries+=1\r\n" +
+                    "if %tries% lss 30 goto wait\r\n" +
+                    ":copied\r\n" +
+                    $"del \"{updatePath}\" > nul 2>&1\r\n" +
+                    $"start \"\" \"{launcherPath}\"\r\n" +
+                    "(goto) 2>nul & del \"%~f0\"\r\n"
                 );
 
                 Process.Start(new ProcessStartInfo(batPath)
