@@ -29,6 +29,11 @@ namespace Oracle_Lite
 
         private string lastWantedRealmKey = null;
 
+        // 1.4: screenshots for in-game bug reports (addon "Frostworn Bug Report") - first check ~10 s
+        // after start, then every 2 minutes (the game writes the addon data on logout / reload).
+        private int secondsSinceBugShots = 110;
+        private const int BugShotsIntervalSeconds = 120;
+
         public Launcher()
         {
             InitializeComponent();
@@ -145,6 +150,16 @@ namespace Oracle_Lite
             if (secondsSinceStatusRefresh >= StatusRefreshIntervalSeconds)
             {
                 _ = RefreshServerStatus();
+            }
+
+            if (++secondsSinceBugShots >= BugShotsIntervalSeconds)
+            {
+                secondsSinceBugShots = 0;
+                _ = Bug_Shots.RunAsync(new[]
+                {
+                    Properties.Settings.Default.GamePath,
+                    Properties.Settings.Default.HDGamePath
+                });
             }
         }
 
